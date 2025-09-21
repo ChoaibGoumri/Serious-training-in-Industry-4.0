@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
@@ -9,40 +10,32 @@ public class BoxMoverController : NetworkBehaviour
     public NetworkPrefabRef boxPrefab;
     public float moveSpeed = 0.2f;
 
-    // Riferimenti ai manager. ARPlaneManager viene trovato subito,
-    // gli altri solo al momento dello spawn.
+    [Header("Riferimento al PrefabSpawner")]
+    public PrefabSpawner prefabSpawner; // assegna in Inspector
+
+    [Header("Effetto particellare alla dissolvenza")]
+    public GameObject particleEffectPrefab; // prefab delle particelle
+
     private ARPlaneManager arPlaneManager;
     private SubplaneConfig subplaneConfig;
     private Transform targetSubplane;
 
-    // Usiamo una lista per gestire più box.
     private List<NetworkObject> spawnedBoxes = new List<NetworkObject>();
 
     public void Awake()
     {
-        // È sicuro cercare ARPlaneManager qui, perché è un componente di base della scena AR.
         arPlaneManager = FindObjectOfType<ARPlaneManager>();
-        
         if (arPlaneManager == null)
-        {
             Debug.LogError("❌ ARPlaneManager non trovato. Assicurati che l'AR sia configurato.");
-        }
     }
 
-    public override void Spawned()
-    {
-        // Questo metodo viene chiamato da Fusion. È un buon posto per inizializzazioni legate alla rete.
-    }
-
-    // 👉 Funzione da collegare al bottone
     public void SpawnAndMoveBox()
     {
-        // 1. Cerca il subplane solo quando il bottone viene premuto
-        if (subplaneConfig == null) {
+        if (subplaneConfig == null)
+        {
             subplaneConfig = FindObjectOfType<SubplaneConfig>();
-            if (subplaneConfig != null) {
+            if (subplaneConfig != null)
                 targetSubplane = subplaneConfig.GetSelectedSubplane()?.transform;
-            }
         }
 
         if (subplaneConfig == null || targetSubplane == null)
@@ -57,7 +50,6 @@ public class BoxMoverController : NetworkBehaviour
             return;
         }
 
-        // 2. Trova il primo piano orizzontale rilevato
         ARPlane firstPlane = null;
         foreach (var plane in arPlaneManager.trackables)
         {
@@ -71,16 +63,15 @@ public class BoxMoverController : NetworkBehaviour
         if (firstPlane != null)
         {
             Vector3 spawnPosition = firstPlane.center;
-            
-            Debug.Log("✅ Piano rilevato. Avvio la procedura di spawn.");
-            
-            // 3. Spawna la box e muovila
             NetworkObject newBox = Runner.Spawn(boxPrefab, spawnPosition, Quaternion.identity);
-            
+
             if (newBox != null)
             {
                 spawnedBoxes.Add(newBox);
                 Debug.Log("🚀 Box spawnata! La lista contiene ora " + spawnedBoxes.Count + " box.");
+
+                // Avvia dissolvenza + richiesta di spawn dal PrefabSpawner
+                StartCoroutine(FadeAndDestroyBoxWithEffect(newBox.gameObject, 2f, 1f));
             }
             else
             {
@@ -93,14 +84,82 @@ public class BoxMoverController : NetworkBehaviour
         }
     }
 
+    private IEnumerator FadeAndDestroyBoxWithEffect(GameObject box, float waitTime, float fadeDuration)
+    {
+        yield return new WaitForSeconds(waitTime);
+
+        Renderer[] renderers = box.GetComponentsInChildren<Renderer>();
+        Material[] materials = new Material[renderers.Length];
+        for (int i = 0; i < renderers.Length; i++)
+            materials[i] = renderers[i].material;
+
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
+            foreach (var mat in materials)
+            {
+                if (mat.HasProperty("_Color"))
+                {
+                    Color c = mat.color;
+                    c.a = alpha;
+                    mat.color = c;
+                }
+            }
+            yield return null;
+        }
+
+        // Effetto particellare
+        if (particleEffectPrefab != null)
+        {
+            GameObject particles = Instantiate(particleEffectPrefab, box.transform.position, Quaternion.identity);
+            Destroy(particles, 3f);
+        }
+
+        // Richiesta al PrefabSpawner di fare TestDirectSpawn (inoltrata allo StateAuthority)
+        if (prefabSpawner != null)
+        {
+            RPC_RequestDirectSpawn();
+            Debug.Log("📡 Richiesta di TestDirectSpawn inviata allo StateAuthority!");
+        }
+
+        // Distruzione/despawn della box
+        if (Runner != null && Runner.IsServer)
+        {
+            NetworkObject netObj = box.GetComponent<NetworkObject>();
+            if (netObj != null)
+                Runner.Despawn(netObj);
+            else
+                Destroy(box);
+        }
+        else
+        {
+            Destroy(box);
+        }
+
+        spawnedBoxes.Remove(box.GetComponent<NetworkObject>());
+    }
+
+    // RPC per inoltrare la richiesta allo StateAuthority del PrefabSpawner
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void RPC_RequestDirectSpawn()
+    {
+        if (prefabSpawner != null)
+        {
+            prefabSpawner.TestDirectSpawn();
+            Debug.Log("✅ TestDirectSpawn eseguito dallo StateAuthority del PrefabSpawner!");
+        }
+    }
+
     public override void FixedUpdateNetwork()
     {
         if (targetSubplane == null) return;
-        
+
         for (int i = spawnedBoxes.Count - 1; i >= 0; i--)
         {
             NetworkObject box = spawnedBoxes[i];
-            
+
             if (box == null)
             {
                 spawnedBoxes.RemoveAt(i);
