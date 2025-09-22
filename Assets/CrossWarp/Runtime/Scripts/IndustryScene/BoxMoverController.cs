@@ -11,10 +11,11 @@ public class BoxMoverController : NetworkBehaviour
     public float moveSpeed = 0.2f;
 
     [Header("Riferimento al PrefabSpawner")]
-    public PrefabSpawner prefabSpawner; // assegna in Inspector
+    public PrefabSpawner prefabSpawner; 
 
-    [Header("Effetto particellare alla dissolvenza")]
-    public GameObject particleEffectPrefab; // prefab delle particelle
+    [Header("Effetti particellari")]
+    public GameObject particleEffectPrefab;      
+    public GameObject respawnParticlePrefab;    
 
     private ARPlaneManager arPlaneManager;
     private SubplaneConfig subplaneConfig;
@@ -70,8 +71,8 @@ public class BoxMoverController : NetworkBehaviour
                 spawnedBoxes.Add(newBox);
                 Debug.Log("🚀 Box spawnata! La lista contiene ora " + spawnedBoxes.Count + " box.");
 
-                // Avvia dissolvenza + richiesta di spawn dal PrefabSpawner
-                StartCoroutine(FadeAndDestroyBoxWithEffect(newBox.gameObject, 2f, 1f));
+                
+                StartCoroutine(FadeAndHideBoxWithEffect(newBox, 2f, 1f));
             }
             else
             {
@@ -84,15 +85,17 @@ public class BoxMoverController : NetworkBehaviour
         }
     }
 
-    private IEnumerator FadeAndDestroyBoxWithEffect(GameObject box, float waitTime, float fadeDuration)
+    private IEnumerator FadeAndHideBoxWithEffect(NetworkObject netObj, float waitTime, float fadeDuration)
     {
         yield return new WaitForSeconds(waitTime);
 
+        GameObject box = netObj.gameObject;
         Renderer[] renderers = box.GetComponentsInChildren<Renderer>();
         Material[] materials = new Material[renderers.Length];
         for (int i = 0; i < renderers.Length; i++)
             materials[i] = renderers[i].material;
 
+        // Dissolvenza
         float elapsed = 0f;
         while (elapsed < fadeDuration)
         {
@@ -110,38 +113,49 @@ public class BoxMoverController : NetworkBehaviour
             yield return null;
         }
 
-        // Effetto particellare
+        
         if (particleEffectPrefab != null)
         {
             GameObject particles = Instantiate(particleEffectPrefab, box.transform.position, Quaternion.identity);
             Destroy(particles, 3f);
         }
 
-        // Richiesta al PrefabSpawner di fare TestDirectSpawn (inoltrata allo StateAuthority)
+         
+        box.SetActive(false);
+
+         
         if (prefabSpawner != null)
         {
             RPC_RequestDirectSpawn();
-            Debug.Log("📡 Richiesta di TestDirectSpawn inviata allo StateAuthority!");
         }
 
-        // Distruzione/despawn della box
-        if (Runner != null && Runner.IsServer)
+        
+        yield return new WaitForSeconds(6f);
+
+      
+        if (respawnParticlePrefab != null)
         {
-            NetworkObject netObj = box.GetComponent<NetworkObject>();
-            if (netObj != null)
-                Runner.Despawn(netObj);
-            else
-                Destroy(box);
+            GameObject respawnParticles = Instantiate(respawnParticlePrefab, box.transform.position, Quaternion.identity);
+            Destroy(respawnParticles, 3f);
         }
-        else
+ 
+        box.SetActive(true);
+
+       
+        foreach (var mat in materials)
         {
-            Destroy(box);
+            if (mat.HasProperty("_Color"))
+            {
+                Color c = mat.color;
+                c.a = 1f;
+                mat.color = c;
+            }
         }
 
-        spawnedBoxes.Remove(box.GetComponent<NetworkObject>());
+        Debug.Log("✅ Box riapparsa nello stesso punto AR!");
     }
 
-    // RPC per inoltrare la richiesta allo StateAuthority del PrefabSpawner
+   
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     private void RPC_RequestDirectSpawn()
     {
