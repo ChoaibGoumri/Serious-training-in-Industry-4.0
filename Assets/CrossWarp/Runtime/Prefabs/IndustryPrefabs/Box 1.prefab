@@ -13,12 +13,9 @@ GameObject:
   - component: {fileID: 6085216743962482288}
   - component: {fileID: 1994093957567817929}
   - component: {fileID: 7595633067367043139}
-  - component: {fileID: 8125861359114741355}
-  - component: {fileID: 6751947784839635649}
   - component: {fileID: 9157548928635842444}
-  - component: {fileID: 1733655508318641045}
   - component: {fileID: 3337904371393765726}
-  - component: {fileID: 6826203677274309538}
+  - component: {fileID: 5883510780215649909}
   m_Layer: 0
   m_Name: Box 1
   m_TagString: Untagged
@@ -114,7 +111,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
@@ -140,37 +137,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1242201112104700404, guid: e45be126a51afea479542063f06866f0, type: 3}
---- !u!114 &8125861359114741355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7110981109239517367}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb898793194e03f4bb10dba03ec2cb70, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_DestroyOnRemoval: 1
---- !u!114 &6751947784839635649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7110981109239517367}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 0
-  outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!114 &9157548928635842444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,35 +154,7 @@ MonoBehaviour:
   Flags: 786433
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 1733655508318641045}
-  - {fileID: 6826203677274309538}
---- !u!114 &1733655508318641045
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7110981109239517367}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7e3cb16a515e4f4991d5fc6c0fefdaf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _isSelectedBy: {fileID: 0}
-  _selectionColor: {r: 0, g: 0, b: 0, a: 0}
-  _selected: 0
-  _worldState: 0
-  meshRenderer: {fileID: 6085216743962482288}
-  collider: {fileID: 3337904371393765726}
-  _lastOffsetToSubplane: {x: 0, y: 0, z: 0}
-  _lastRotationOffsetToSubplane: {x: 0, y: 0, z: 0, w: 0}
-  _networkedScale: {x: 0, y: 0, z: 0}
-  minScale: 0.25
-  maxScale: 2.5
-  particleEffectsPrefab: {fileID: 0}
-  particleEffects: {fileID: 0}
-  transitionManager: {fileID: 0}
-  ObjectShadow: {fileID: 0}
+  - {fileID: 5883510780215649909}
 --- !u!65 &3337904371393765726
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -238,7 +176,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6826203677274309538
+--- !u!114 &5883510780215649909
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -247,7 +185,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7110981109239517367}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8163d62fc1914747af19e9a8696e372, type: 3}
+  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _transitionState: 0
+  SyncScale: 0
+  SyncParent: 0
+  _autoAOIOverride: 1
+  DisableSharedModeInterpolation: 0

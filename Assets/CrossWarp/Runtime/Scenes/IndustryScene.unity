@@ -898,6 +898,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 138102332}
+  - component: {fileID: 138102334}
+  - component: {fileID: 138102335}
   m_Layer: 0
   m_Name: ExitPoint
   m_TagString: Untagged
@@ -920,6 +922,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 828899588}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &138102334
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138102331}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.0883865, y: 2.116149, z: 2.8551807}
+  m_Center: {x: -0.33290243, y: 0.5580745, z: -0.9345026}
+--- !u!114 &138102335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138102331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2ec95f347ac4b548b05163032278db2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &183501688
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,7 +1005,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: {x: 0, y: 0, z: 1}
   speed: 4
-  showDebugInfo: 0
+  showDebugInfo: 1
 --- !u!54 &183501691
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1206,9 +1241,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1519631161}
-        m_TargetAssemblyTypeName: BoxMoverController, Assembly-CSharp
-        m_MethodName: SpawnAndMoveBox
+      - m_Target: {fileID: 1519631163}
+        m_TargetAssemblyTypeName: MasterFlowController, Assembly-CSharp
+        m_MethodName: Client_StartFlow
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2883,6 +2918,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1519631162}
   - component: {fileID: 1519631161}
+  - component: {fileID: 1519631163}
   - component: {fileID: 1519631160}
   m_Layer: 0
   m_Name: AR Box Controller
@@ -2909,6 +2945,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1519631161}
+  - {fileID: 1519631163}
 --- !u!114 &1519631161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2916,7 +2953,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1519631159}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b379f726d16416419522bf0fb65f6f1, type: 3}
   m_Name: 
@@ -2926,7 +2963,7 @@ MonoBehaviour:
   moveSpeed: 0.6
   prefabSpawner: {fileID: 505844700}
   particleEffectPrefab: {fileID: 3548588485384254792, guid: 2f9e7dc163581394da1e00b561eed65d, type: 3}
-  respawnParticlePrefab: {fileID: 6146545414153545494, guid: 61753401622c2a947a30e2147430e97d, type: 3}
+  respawnParticlePrefab: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
 --- !u!4 &1519631162
 Transform:
   m_ObjectHideFlags: 0
@@ -2942,6 +2979,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1519631163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519631159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22b16db5702a12649a1edbeda891308d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arBoxPrefab:
+    RawGuidValue: ba8b0c6d592d75948b6be462c38e1099
+  arMoveSpeed: 4
+  arRaycastManager: {fileID: 1094143211}
+  vrPrefabSpawner: {fileID: 505844700}
+  despawnEffectPrefab: {fileID: 3548588485384254792, guid: 2f9e7dc163581394da1e00b561eed65d, type: 3}
+  respawnEffectPrefab: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
 --- !u!1 &1675671982
 GameObject:
   m_ObjectHideFlags: 0

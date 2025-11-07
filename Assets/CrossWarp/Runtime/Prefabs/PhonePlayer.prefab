@@ -156,7 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitObjectPrefab: {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
   hitObjectsPrefabs:
-  - {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
+  - {fileID: 7110981109239517367, guid: ba8b0c6d592d75948b6be462c38e1099, type: 3}
   _interactionColor: {r: 0, g: 0, b: 0, a: 0}
   _networkedSelectedObject: {fileID: 0}
 --- !u!114 &3629465471445127827
