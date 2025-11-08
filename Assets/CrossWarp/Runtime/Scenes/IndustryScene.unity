@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: {x: 0, y: 0, z: 1}
-  speed: 2
+  speed: 5
   showDebugInfo: 1
 --- !u!54 &183501691
 Rigidbody:

@@ -15,6 +15,10 @@ GameObject:
   - component: {fileID: 8196644691507106411}
   - component: {fileID: 7805711943937243363}
   - component: {fileID: 7418362794540960535}
+  - component: {fileID: 7144447886761594805}
+  - component: {fileID: 3840856014616333639}
+  - component: {fileID: 9175130412522942789}
+  - component: {fileID: 4115765072394836531}
   m_Layer: 0
   m_Name: Dumbell1
   m_TagString: Untagged
@@ -153,6 +157,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 7418362794540960535}
+  - {fileID: 9175130412522942789}
+  - {fileID: 4115765072394836531}
 --- !u!114 &7418362794540960535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,3 +171,74 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8788e9e753af75749b38bca5fb5adc5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7144447886761594805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812292997695057737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb898793194e03f4bb10dba03ec2cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_DestroyOnRemoval: 1
+--- !u!114 &3840856014616333639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812292997695057737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0.05724919, g: 1, b: 0, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
+--- !u!114 &9175130412522942789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812292997695057737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7e3cb16a515e4f4991d5fc6c0fefdaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSelectedBy: {fileID: 0}
+  _selectionColor: {r: 0, g: 0, b: 0, a: 0}
+  _selected: 0
+  _worldState: 1
+  meshRenderer: {fileID: 5871661567905484189}
+  collider: {fileID: 8196644691507106411}
+  _lastOffsetToSubplane: {x: 0, y: 0, z: 0}
+  _lastRotationOffsetToSubplane: {x: 0, y: 0, z: 0, w: 0}
+  _networkedScale: {x: 0, y: 0, z: 0}
+  minScale: 0.25
+  maxScale: 2.5
+  particleEffectsPrefab: {fileID: 263075256267642485, guid: 205c93b5b5c30274780a726345f9e664, type: 3}
+  particleEffects: {fileID: 0}
+  transitionManager: {fileID: 0}
+  ObjectShadow: {fileID: 0}
+--- !u!114 &4115765072394836531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812292997695057737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8163d62fc1914747af19e9a8696e372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _transitionState: 0
