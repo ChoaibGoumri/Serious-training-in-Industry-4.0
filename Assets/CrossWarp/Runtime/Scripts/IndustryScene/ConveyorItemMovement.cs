@@ -16,8 +16,16 @@ public class ConveyorItemMovement : NetworkBehaviour {
         Debug.Log($"🚀 [Spawned] {gameObject.name} con Rigidbody attivato.");
     }
 
-    private void OnTriggerEnter(Collider other) {
-        if (!Object.HasStateAuthority) return;
+    // Nello script ConveyorItemMovement.cs
+
+// Nello script ConveyorItemMovement.cs
+
+    private void OnTriggerEnter(Collider other) 
+    {
+        // 👇 --- AGGIUNGI QUESTO CONTROLLO --- 👇
+        // Se l'oggetto è già stato distrutto (p.es. dall'ExitPoint), non fare nulla.
+        if (Object == null || !Object.HasStateAuthority) return;
+        // 👆 --- FINE DEL FIX --- 👆
 
         ConveyorBeltController belt = other.GetComponent<ConveyorBeltController>();
         if (belt != null) {

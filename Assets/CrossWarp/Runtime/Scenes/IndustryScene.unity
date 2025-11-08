@@ -1004,7 +1004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: {x: 0, y: 0, z: 1}
-  speed: 4
+  speed: 2
   showDebugInfo: 1
 --- !u!54 &183501691
 Rigidbody:
@@ -1186,7 +1186,7 @@ RectTransform:
   m_GameObject: {fileID: 315901808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 1.5807556, y: 1.5807556, z: 1.5807556}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1425762106}
@@ -1194,8 +1194,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 279, y: 115}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 332.5, y: 144}
+  m_SizeDelta: {x: 199.4339, y: 60.7361}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &315901810
 MonoBehaviour:
@@ -2941,7 +2941,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SortKey: 1559587759
   ObjectInterest: 1
-  Flags: 786433
+  Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1519631161}
@@ -2993,10 +2993,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arBoxPrefab:
     RawGuidValue: ba8b0c6d592d75948b6be462c38e1099
-  arMoveSpeed: 4
+  arMoveSpeed: 0.5
   arRaycastManager: {fileID: 1094143211}
   vrPrefabSpawner: {fileID: 505844700}
-  despawnEffectPrefab: {fileID: 3548588485384254792, guid: 2f9e7dc163581394da1e00b561eed65d, type: 3}
+  despawnEffectPrefab: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
   respawnEffectPrefab: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
 --- !u!1 &1675671982
 GameObject:
@@ -3665,6 +3665,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1159003901436889404, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 161.6794
+      objectReference: {fileID: 0}
+    - target: {fileID: 1159003901436889404, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 43.718
+      objectReference: {fileID: 0}
+    - target: {fileID: 1159003901436889404, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.6794
+      objectReference: {fileID: 0}
+    - target: {fileID: 1159003901436889404, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 161.72
+      objectReference: {fileID: 0}
     - target: {fileID: 1184217826178098772, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
       propertyPath: m_XROrigin
       value: 
@@ -3673,6 +3689,14 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 39825365}
+    - target: {fileID: 1694085143244898313, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 48.3763
+      objectReference: {fileID: 0}
+    - target: {fileID: 1694085143244898313, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 229.6237
+      objectReference: {fileID: 0}
     - target: {fileID: 1949183853777729249, guid: c62294c05ebf82b4398d9f89ae48ab22, type: 3}
       propertyPath: m_Pivot.x
       value: 0

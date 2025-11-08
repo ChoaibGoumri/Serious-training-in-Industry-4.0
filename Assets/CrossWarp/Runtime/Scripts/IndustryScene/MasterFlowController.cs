@@ -14,10 +14,10 @@ public class MasterFlowController : NetworkBehaviour
     [Header("Riferimenti AR (Assegna)")]
     public NetworkPrefabRef arBoxPrefab;
     public float arMoveSpeed = 1.0f; 
-    public ARRaycastManager arRaycastManager; // Assicurati sia assegnato!
+    public ARRaycastManager arRaycastManager;
 
     [Header("Riferimenti VR (Assegna)")]
-    public PrefabSpawner vrPrefabSpawner; // Assicurati sia assegnato!
+    public PrefabSpawner vrPrefabSpawner; 
     
     [Header("Effetti Particellari (Assegna)")]
     public GameObject despawnEffectPrefab;
@@ -49,17 +49,9 @@ public class MasterFlowController : NetworkBehaviour
 
     public void Client_StartFlow()
     {
-        // =================================================================
-        // STEP 1: Questo DEVE apparire nella console del client (telefono)
-        Debug.LogError("--- CLIENT: (1) Client_StartFlow() CHIAMATO! ---"); 
-        // =================================================================
-
         if (arRaycastManager == null)
         {
-            // =================================================================
-            // STEP 2 (FALLITO): Se vedi questo, assegna il Raycast Manager
-            Debug.LogError("--- CLIENT: (2) FALLITO! arRaycastManager è NULL. Assegnalo nell'Inspector! ---");
-            // =================================================================
+            Debug.LogError("--- CLIENT: FALLITO! arRaycastManager è NULL. ---");
             return;
         }
 
@@ -68,47 +60,28 @@ public class MasterFlowController : NetworkBehaviour
             localSubplaneCache = FindObjectOfType<Subplane>();
             if (localSubplaneCache == null)
             {
-                // =================================================================
-                // STEP 3 (FALLITO): Se vedi questo, il Subplane non è stato trovato
-                Debug.LogError("--- CLIENT: (3) FALLITO! Non trovo 'Subplane'. Devi prima configurarlo. ---");
-                // =================================================================
+                Debug.LogError("--- CLIENT: FALLITO! Non trovo 'Subplane'. ---");
                 return;
             }
         }
         
-        // =================================================================
-        Debug.Log("--- CLIENT: (4) Subplane trovato! Procedo a raycast... ---");
-        // =================================================================
-
         List<ARRaycastHit> hits = new List<ARRaycastHit>();
         if (arRaycastManager.Raycast(new Vector2(Screen.width / 2, Screen.height / 2), hits, TrackableType.PlaneWithinPolygon))
         {
             Vector3 spawnPos = hits[0].pose.position;
-            
-            // =================================================================
-            Debug.Log("--- CLIENT: (5) Raycast RIUSCITO! Invio RPC... ---");
-            // =================================================================
-            
             RPC_StartFlow(spawnPos, localSubplaneCache.transform.TransformPoint(new Vector3(-0.5f, -0.5f, 0f)), 
                           localSubplaneCache.transform.TransformPoint(new Vector3(0.5f, -0.5f, 0f)),
                           localSubplaneCache.transform.TransformDirection(Vector3.right));
         }
         else
         {
-            // =================================================================
-            Debug.LogWarning("--- CLIENT: (6) FALLITO - Raycast non ha colpito un piano AR. Mira meglio! ---");
-            // =================================================================
+            Debug.LogWarning("--- CLIENT: FALLITO - Raycast non ha colpito un piano AR. ---");
         }
     }
 
-    // --- RPC_StartFlow e il resto dello script rimangono INVARIATI ---
-    // (Usa la versione con MovePosition() che hai già)
-    
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     private void RPC_StartFlow(Vector3 spawnPosition, Vector3 destSinistra, Vector3 spawnDestra, Vector3 moveDirDestra)
     {
-        Debug.LogError("--- SERVER: RPC_StartFlow() RICEVUTO! ---");
-
         if (CurrentState != FlowState.Idle)
         {
             Debug.LogWarning("--- SERVER: FALLITO - Stato non Idle. ---");
@@ -125,8 +98,6 @@ public class MasterFlowController : NetworkBehaviour
         net_arSpawnDestra = spawnDestra;
         net_arFinalMoveDirection = moveDirDestra;
 
-        Debug.Log("--- SERVER: FASE 1 - Coordinate ricevute. Spawn in corso. ---");
-        
         activeArBox = Runner.Spawn(arBoxPrefab, spawnPosition, Quaternion.identity);
         
         if (activeArBox != null)
@@ -155,8 +126,6 @@ public class MasterFlowController : NetworkBehaviour
             return;
         }
 
-        Debug.Log("SERVER: FASE 3 - Box da VR... Spawn in corso.");
-        
         activeArBox = Runner.Spawn(arBoxPrefab, net_arSpawnDestra, Quaternion.identity);
         RPC_PlayRespawnEffect(net_arSpawnDestra);
         
@@ -197,9 +166,7 @@ public class MasterFlowController : NetworkBehaviour
         if (Vector3.Distance(activeArBox_RB.position, net_arDestSinistra) < 0.1f)
         {
             Debug.Log("SERVER: FASE 1 completa. Box AR arrivato a sinistra.");
-            
             RPC_PlayDespawnEffect(activeArBox_RB.position);
-            
             Runner.Despawn(activeArBox); 
             activeArBox = null;
             activeArBox_RB = null;
@@ -214,7 +181,6 @@ public class MasterFlowController : NetworkBehaviour
             Vector3 currentPos = activeArBox_RB.position;
             Vector3 direction = (net_arDestSinistra - currentPos).normalized;
             Vector3 newPos = currentPos + (direction * arMoveSpeed * Runner.DeltaTime);
-            
             activeArBox_RB.MovePosition(newPos);
         }
     }
@@ -223,24 +189,26 @@ public class MasterFlowController : NetworkBehaviour
     {
         if (activeArBox_RB == null) return;
             
+        // 👇 --- LOGICA "NON DISTRUGGERE" MODIFICATA --- 👇
         if (finalDespawnTimer.Expired(Runner))
         {
-            Debug.Log("SERVER: FASE 3 completa. Timer scaduto, distruggo box finale.");
+            Debug.Log("SERVER: FASE 3 completa. Timer scaduto, box si ferma.");
             
-            RPC_PlayDespawnEffect(activeArBox_RB.position);
-
-            Runner.Despawn(activeArBox);
-            activeArBox = null;
+            // Pulisci i riferimenti per smettere di aggiornare questo box
+            // Non lo distruggiamo (Runner.Despawn)
             activeArBox_RB = null;
+            activeArBox = null;
+            
             CurrentState = FlowState.Idle;
         }
         else
         {
+            // Timer ancora attivo: continua a muoverti
             Vector3 currentPos = activeArBox_RB.position;
             Vector3 newPos = currentPos + (net_arFinalMoveDirection * arMoveSpeed * Runner.DeltaTime);
-            
             activeArBox_RB.MovePosition(newPos);
         }
+        // 👆 --- FINE LOGICA MODIFICATA --- 👆
     }
     
     [Rpc(RpcSources.All, RpcTargets.All)]

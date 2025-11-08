@@ -154,9 +154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d341db7b41c6fe344bbd207a2b28fece, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitObjectPrefab: {fileID: 8941350250810633950, guid: ddb41286387619347bc0fd58e39fdf3c, type: 3}
-  hitObjectsPrefabs:
-  - {fileID: 7110981109239517367, guid: ba8b0c6d592d75948b6be462c38e1099, type: 3}
+  hitObjectPrefab: {fileID: 0}
+  hitObjectsPrefabs: []
   _interactionColor: {r: 0, g: 0, b: 0, a: 0}
   _networkedSelectedObject: {fileID: 0}
 --- !u!114 &3629465471445127827
