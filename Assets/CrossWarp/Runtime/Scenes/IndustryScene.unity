@@ -1273,7 +1273,7 @@ MonoBehaviour:
   - {fileID: 1886134244}
   - {fileID: 1886134243}
   - {fileID: 1519631159}
-  - {fileID: 863609985}
+  - {fileID: 0}
   DesktopObjects:
   - {fileID: 722580588}
   - {fileID: 828899587}
@@ -2493,53 +2493,6 @@ Transform:
   - {fileID: 138102332}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &863609985
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 863609987}
-  - component: {fileID: 863609986}
-  m_Layer: 0
-  m_Name: Debug AR
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &863609986
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 863609985}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63fc7d3546996bf4a87d076641b57797, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  logOnStart: 1
-  continuousLogging: 0
-  loggingInterval: 2
---- !u!4 &863609987
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 863609985}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 677.33545, y: 260.4979, z: -83.07164}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &893135291
 GameObject:
   m_ObjectHideFlags: 0
@@ -3432,7 +3385,6 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 1519631161}
   - {fileID: 1519631163}
 --- !u!114 &1519631161
 MonoBehaviour:
@@ -3446,12 +3398,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b379f726d16416419522bf0fb65f6f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _runner: {fileID: 0}
+  _object: {fileID: 0}
+  InvokeRpc: 0
+  ObjectIndex: 0
+  WordOffset: 0
+  WordCount: 0
+  DefaultReplicated: 1
   boxPrefab:
-    RawGuidValue: ba8b0c6d592d75948b6be462c38e1099
+    RawGuidValue:
+    - -7749237721716192326
+    - -7417271616450303093
   moveSpeed: 0.6
   prefabSpawner: {fileID: 505844700}
   particleEffectPrefab: {fileID: 3548588485384254792, guid: 2f9e7dc163581394da1e00b561eed65d, type: 3}
   respawnParticlePrefab: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
+  arPlaneManager: {fileID: 0}
+  subplaneConfig: {fileID: 0}
+  targetSubplane: {fileID: 0}
+  spawnedBoxes: []
 --- !u!4 &1519631162
 Transform:
   m_ObjectHideFlags: 0
@@ -4908,4 +4873,3 @@ SceneRoots:
   - {fileID: 1886134242}
   - {fileID: 828899588}
   - {fileID: 1519631162}
-  - {fileID: 863609987}
