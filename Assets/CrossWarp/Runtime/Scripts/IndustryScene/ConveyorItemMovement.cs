@@ -9,18 +9,18 @@ public class ConveyorItemMovement : NetworkBehaviour {
     private Vector3 targetPosition;
     private bool wasKinematicBefore;
 
-    // ✅ FIX: Rimosso OnChanged - Usiamo una proprietà con getter/setter custom
+   
     [Networked]
     private NetworkBool IsKinematicOnBelt { get; set; }
 
-    // ✅ FIX: Variabile locale per tracciare il valore precedente
+     
     private bool _previousKinematicState;
 
     public override void Spawned() {
         _rigidbody = GetComponent<Rigidbody>();
         movableObject = GetComponent<MovableObject>();
         
-        // ✅ FIX: Verifica che il Rigidbody esista
+        
         if (_rigidbody == null) {
             Debug.LogError($"❌ [Spawned] {gameObject.name} non ha un Rigidbody!");
             return;
@@ -32,11 +32,11 @@ public class ConveyorItemMovement : NetworkBehaviour {
 
         Debug.Log($"🚀 [Spawned] {gameObject.name} con Rigidbody attivato.");
 
-        // Applica lo stato corretto all'avvio
+        
         ApplyKinematicState(IsKinematicOnBelt);
     }
 
-    // ✅ FIX PER IL LAG: Applica lo stato su tutti i client
+    
     private void ApplyKinematicState(bool shouldBeKinematicOnBelt) {
         if (_rigidbody == null) {
             _rigidbody = GetComponent<Rigidbody>();
@@ -53,7 +53,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        // ✅ FIX: Verifica null safety completa
+        
         if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
 
         ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
@@ -61,7 +61,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
             currentBelt = belt;
             targetPosition = transform.position;
             
-            // Imposta lo stato [Networked] (solo Authority)
+           
             if (movableObject != null && !movableObject.selected) {
                 IsKinematicOnBelt = true; 
                 Debug.Log($"✅ [OnCollisionEnter] {gameObject.name} è entrato sul nastro");
@@ -70,14 +70,14 @@ public class ConveyorItemMovement : NetworkBehaviour {
     }
 
     private void OnCollisionExit(Collision collision) {
-        // ✅ FIX: Verifica null safety
+        
         if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
 
         ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
         if (belt != null && belt == currentBelt) {
             currentBelt = null;
             
-            // Imposta lo stato [Networked] (solo Authority)
+            
             IsKinematicOnBelt = false;
             
             if (movableObject != null && _rigidbody != null) {
@@ -91,10 +91,10 @@ public class ConveyorItemMovement : NetworkBehaviour {
     }
 
     public override void FixedUpdateNetwork() {
-        // ✅ FIX: Verifica completa dell'oggetto
+         
         if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
 
-        // La selezione ha priorità
+        
         if (movableObject != null && movableObject.selected) {
             if (currentBelt != null) {
                 Debug.Log($"⚠️ [FixedUpdateNetwork] {gameObject.name} è stato selezionato, esco dal nastro");
@@ -109,12 +109,12 @@ public class ConveyorItemMovement : NetworkBehaviour {
             return;
         }
 
-        // ⭐️ NUOVA LOGICA DI PAUSA ⭐️
+        
         if (ConveyorBeltSystemManager.Instance != null && ConveyorBeltSystemManager.Instance.IsPaused) {
-            return; // Non muovere l'oggetto se il sistema è in pausa
+            return;  
         }
         
-        // Il resto della logica di movimento
+        
         if (currentBelt == null) {
             if (IsKinematicOnBelt) IsKinematicOnBelt = false;
             return;
@@ -140,9 +140,9 @@ public class ConveyorItemMovement : NetworkBehaviour {
         }
     }
 
-    // ✅ FIX: Controlla i cambiamenti nello stato in Render
+   
     public override void Render() {
-        // Questo viene chiamato su tutti i client per sincronizzare visualmente
+       
         if (_previousKinematicState != IsKinematicOnBelt) {
             _previousKinematicState = IsKinematicOnBelt;
             ApplyKinematicState(IsKinematicOnBelt);

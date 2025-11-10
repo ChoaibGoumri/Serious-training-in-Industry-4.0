@@ -3,8 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class ConveyorBeltController : MonoBehaviour {
     [Header("Conveyor Settings")]
-    public Vector3 direction = Vector3.right; // Direzione del nastro
-    public float speed = 5.0f; // Velocità spinta
+    public Vector3 direction = Vector3.right; 
+    public float speed = 5.0f; 
 
     [Header("Debug Info")]
     public bool showDebugInfo = true;
@@ -15,7 +15,7 @@ public class ConveyorBeltController : MonoBehaviour {
         _collider = GetComponent<BoxCollider>();
         _collider.size = new Vector3(3f, 0.1f, 3f);
         _collider.center = Vector3.zero;
-        _collider.isTrigger = false; // 🔹 Non trigger!
+        _collider.isTrigger = false; 
         Debug.Log($"🔧 [RESET] Conveyor configurato: Size: {_collider.size}, IsTrigger: {_collider.isTrigger}");
     }
 
@@ -38,9 +38,6 @@ public class ConveyorBeltController : MonoBehaviour {
     public Vector3 GetConveyorVelocity() {
         return direction.normalized * speed;
     }
-
-    // 🔹 Movimento oggetti colpiti dal collider
-
 
     private void OnDrawGizmos() {
         Vector3 velocity = direction.normalized;

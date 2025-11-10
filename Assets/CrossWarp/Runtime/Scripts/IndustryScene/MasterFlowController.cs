@@ -189,13 +189,12 @@ public class MasterFlowController : NetworkBehaviour
     {
         if (activeArBox_RB == null) return;
             
-        // 👇 --- LOGICA "NON DISTRUGGERE" MODIFICATA --- 👇
+ 
         if (finalDespawnTimer.Expired(Runner))
         {
             Debug.Log("SERVER: FASE 3 completa. Timer scaduto, box si ferma.");
             
-            // Pulisci i riferimenti per smettere di aggiornare questo box
-            // Non lo distruggiamo (Runner.Despawn)
+      
             activeArBox_RB = null;
             activeArBox = null;
             
@@ -203,12 +202,12 @@ public class MasterFlowController : NetworkBehaviour
         }
         else
         {
-            // Timer ancora attivo: continua a muoverti
+             
             Vector3 currentPos = activeArBox_RB.position;
             Vector3 newPos = currentPos + (net_arFinalMoveDirection * arMoveSpeed * Runner.DeltaTime);
             activeArBox_RB.MovePosition(newPos);
         }
-        // 👆 --- FINE LOGICA MODIFICATA --- 👆
+       
     }
     
     [Rpc(RpcSources.All, RpcTargets.All)]

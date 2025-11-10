@@ -10,7 +10,7 @@ public class ExitPointTrigger : MonoBehaviour
     void Start()
     {
         var col = GetComponent<Collider>();
-        // Assicurati che sia un SENSORE
+        
         if (!col.isTrigger)
         {
             Debug.LogWarning($"--- EXITPOINT: Il collider su {gameObject.name} NON era un trigger! Lo imposto ora.", gameObject);
@@ -30,13 +30,13 @@ public class ExitPointTrigger : MonoBehaviour
 
         if (hasTriggered || masterController == null) return;
 
-        // 👇 CONTROLLO REIMPOSTATO: Cerca lo script che sappiamo essere lì
+      
         if (other.GetComponent<ConveyorItemMovement>() != null)
         {
             Debug.Log($"✅ ExitPoint: Avatar VR rilevato (Script: ConveyorItemMovement)! Invio RPC...", other.gameObject);
             
             hasTriggered = true; 
-            masterController.RPC_HandleVRExit(); // Chiama il regista
+            masterController.RPC_HandleVRExit();  
 
             if (other.GetComponent<NetworkObject>() != null)
             {

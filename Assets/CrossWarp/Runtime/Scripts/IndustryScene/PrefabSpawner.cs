@@ -18,8 +18,7 @@ public class PrefabSpawner : NetworkBehaviour
     private List<NetworkObject> spawnedObjects = new List<NetworkObject>();
     private Coroutine spawnCoroutine;
 
-    // 🔽 AGGIUNGI QUESTA RIGA 🔽
-    // Contatore totale degli oggetti spawnati.
+ 
     private int totalSpawnedCount = 0;
 
 
@@ -36,7 +35,7 @@ public class PrefabSpawner : NetworkBehaviour
 
     private IEnumerator SpawnSequenceCoroutine()
     {
-        // Spostato qui: solo se la coroutine parte davvero
+         
         hasSpawnedInitialPrefabs = true;
 
         if (Runner == null || !Runner.IsServer || prefabsToSpawn == null || prefabsToSpawn.Length == 0)
@@ -47,7 +46,7 @@ public class PrefabSpawner : NetworkBehaviour
 
         for (int i = 0; i < numberOfPrefabsToSpawn; i++)
         {
-            // UNICA MODIFICA: selezione random invece di sequenziale
+        
             int prefabIndex = Random.Range(0, prefabsToSpawn.Length);
             NetworkPrefabRef prefabToSpawn = prefabsToSpawn[prefabIndex];
 
@@ -96,7 +95,7 @@ public class PrefabSpawner : NetworkBehaviour
             spawnCoroutine = null;
         }
 
-        // Reset del flag per permettere nuovi spawn
+         
         hasSpawnedInitialPrefabs = false;
         
         spawnCoroutine = StartCoroutine(SpawnSequenceCoroutine());
@@ -112,7 +111,7 @@ public class PrefabSpawner : NetworkBehaviour
             return;
         }
         
-        // Avvia coroutine per spawn con intervallo
+         
         StartCoroutine(TestSpawnWithIntervalCoroutine());
     }
 
@@ -123,7 +122,7 @@ public class PrefabSpawner : NetworkBehaviour
             int randomIndex = Random.Range(0, prefabsToSpawn.Length);
             RPC_TestSpawnSingle(randomIndex);
             
-            // Aspetta l'intervallo prima del prossimo spawn
+        
             yield return new WaitForSeconds(spawnInterval);
         }
     }
@@ -161,7 +160,7 @@ public class PrefabSpawner : NetworkBehaviour
         if (testObj != null)
         {
             spawnedObjects.Add(testObj);
-            totalSpawnedCount++; // ⬅️ AGGIUNGI QUESTA RIGA
+            totalSpawnedCount++;  
             Debug.Log($"✅ Manually spawned prefab index {prefabIndex}");
         }
         else
@@ -179,7 +178,7 @@ public class PrefabSpawner : NetworkBehaviour
     {
         if (spawnedObjects == null) return 0;
 
-        // Pulisce la lista da oggetti che sono stati distrutti (diventati null)
+        
         for (int i = spawnedObjects.Count - 1; i >= 0; i--)
         {
             if (spawnedObjects[i] == null || !spawnedObjects[i].IsValid)
@@ -188,7 +187,7 @@ public class PrefabSpawner : NetworkBehaviour
             }
         }
 
-        // Restituisce il conteggio pulito
+         
         return spawnedObjects.Count;
     }
     public int GetTotalSpawnedCount()
