@@ -40,15 +40,7 @@ public class ConveyorBeltController : MonoBehaviour {
     }
 
     // 🔹 Movimento oggetti colpiti dal collider
-    private void OnCollisionStay(Collision collision) {
-        Rigidbody rb = collision.rigidbody;
-        if (rb != null) {
-            Vector3 conveyorVel = GetConveyorVelocity();
-            // Manteniamo la velocità verticale (gravità) ma aggiungiamo quella del nastro
-            Vector3 newVelocity = new Vector3(conveyorVel.x, rb.velocity.y, conveyorVel.z);
-            rb.velocity = newVelocity;
-        }
-    }
+
 
     private void OnDrawGizmos() {
         Vector3 velocity = direction.normalized;

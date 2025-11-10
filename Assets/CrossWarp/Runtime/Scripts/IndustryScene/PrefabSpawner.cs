@@ -18,6 +18,10 @@ public class PrefabSpawner : NetworkBehaviour
     private List<NetworkObject> spawnedObjects = new List<NetworkObject>();
     private Coroutine spawnCoroutine;
 
+    // 🔽 AGGIUNGI QUESTA RIGA 🔽
+    // Contatore totale degli oggetti spawnati.
+    private int totalSpawnedCount = 0;
+
 
     public override void FixedUpdateNetwork()
     {
@@ -157,11 +161,38 @@ public class PrefabSpawner : NetworkBehaviour
         if (testObj != null)
         {
             spawnedObjects.Add(testObj);
+            totalSpawnedCount++; // ⬅️ AGGIUNGI QUESTA RIGA
             Debug.Log($"✅ Manually spawned prefab index {prefabIndex}");
         }
         else
         {
             Debug.LogError($"❌ Manual spawn failed for prefab index {prefabIndex}");
         }
+    }
+
+    public int GetTargetSpawnCount()
+    {
+        return numberOfPrefabsToSpawn;
+    }
+
+    public int GetCurrentActiveCount()
+    {
+        if (spawnedObjects == null) return 0;
+
+        // Pulisce la lista da oggetti che sono stati distrutti (diventati null)
+        for (int i = spawnedObjects.Count - 1; i >= 0; i--)
+        {
+            if (spawnedObjects[i] == null || !spawnedObjects[i].IsValid)
+            {
+                spawnedObjects.RemoveAt(i);
+            }
+        }
+
+        // Restituisce il conteggio pulito
+        return spawnedObjects.Count;
+    }
+    public int GetTotalSpawnedCount()
+    {
+        return totalSpawnedCount;
     }
 }

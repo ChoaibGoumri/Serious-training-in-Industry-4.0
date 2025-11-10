@@ -6,96 +6,166 @@ public class ConveyorItemMovement : NetworkBehaviour {
     private Rigidbody _rigidbody;
     private ConveyorBeltController currentBelt;
     private MovableObject movableObject;
-    private Vector3 targetPosition; // 🔹 Posizione target per interpolazione
+    private Vector3 targetPosition;
     private bool wasKinematicBefore;
+
+    // ✅ FIX: Rimosso OnChanged - Usiamo una proprietà con getter/setter custom
+    [Networked]
+    private NetworkBool IsKinematicOnBelt { get; set; }
+
+    // ✅ FIX: Variabile locale per tracciare il valore precedente
+    private bool _previousKinematicState;
 
     public override void Spawned() {
         _rigidbody = GetComponent<Rigidbody>();
         movableObject = GetComponent<MovableObject>();
+        
+        // ✅ FIX: Verifica che il Rigidbody esista
+        if (_rigidbody == null) {
+            Debug.LogError($"❌ [Spawned] {gameObject.name} non ha un Rigidbody!");
+            return;
+        }
+
         targetPosition = transform.position;
         wasKinematicBefore = _rigidbody.isKinematic;
+        _previousKinematicState = IsKinematicOnBelt;
 
         Debug.Log($"🚀 [Spawned] {gameObject.name} con Rigidbody attivato.");
+
+        // Applica lo stato corretto all'avvio
+        ApplyKinematicState(IsKinematicOnBelt);
+    }
+
+    // ✅ FIX PER IL LAG: Applica lo stato su tutti i client
+    private void ApplyKinematicState(bool shouldBeKinematicOnBelt) {
+        if (_rigidbody == null) {
+            _rigidbody = GetComponent<Rigidbody>();
+            if (_rigidbody == null) return;
+        }
+
+        if (shouldBeKinematicOnBelt) {
+            _rigidbody.isKinematic = true;
+            _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+        } else {
+            _rigidbody.isKinematic = wasKinematicBefore;
+            _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+        }
     }
 
     private void OnCollisionEnter(Collision collision) {
-        if (Object == null || !Object.HasStateAuthority) return;
+        // ✅ FIX: Verifica null safety completa
+        if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
 
         ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
         if (belt != null) {
-            //Debug.Log($"📥 [OnCollisionEnter] {gameObject.name} entrato in conveyor '{belt.gameObject.name}'");
             currentBelt = belt;
             targetPosition = transform.position;
             
-            // 🔹 Rendi kinematic ma mantieni l'interpolazione
+            // Imposta lo stato [Networked] (solo Authority)
             if (movableObject != null && !movableObject.selected) {
-                wasKinematicBefore = _rigidbody.isKinematic;
-                _rigidbody.isKinematic = true;
-                // 🔹 IMPORTANTE: Mantieni l'interpolazione attiva!
-                _rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-                //Debug.Log($"🔒 Rigidbody reso kinematic con interpolazione");
+                IsKinematicOnBelt = true; 
+                Debug.Log($"✅ [OnCollisionEnter] {gameObject.name} è entrato sul nastro");
             }
         }
     }
 
     private void OnCollisionExit(Collision collision) {
-        if (!Object.HasStateAuthority) return;
+        // ✅ FIX: Verifica null safety
+        if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
 
         ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
         if (belt != null && belt == currentBelt) {
-            //Debug.Log($"📤 [OnCollisionExit] {gameObject.name} uscito da conveyor '{belt.gameObject.name}'");
             currentBelt = null;
             
-            // 🔹 Ripristina il Rigidbody
-            if (movableObject != null) {
-                _rigidbody.isKinematic = wasKinematicBefore;
+            // Imposta lo stato [Networked] (solo Authority)
+            IsKinematicOnBelt = false;
+            
+            if (movableObject != null && _rigidbody != null) {
                 _rigidbody.velocity = Vector3.zero;
-                
-                // Aggiorna gli offset
                 movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(transform.position);
                 movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(transform.rotation);
-
-               //Debug.Log($"🔓 Rigidbody ripristinato");
             }
+
+            Debug.Log($"✅ [OnCollisionExit] {gameObject.name} è uscito dal nastro");
         }
     }
 
     public override void FixedUpdateNetwork() {
-        if (!Object.HasStateAuthority) return;
+        // ✅ FIX: Verifica completa dell'oggetto
+        if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
 
-        // 🔹 Se l'oggetto è selezionato, esci dal nastro
+        // La selezione ha priorità
         if (movableObject != null && movableObject.selected) {
             if (currentBelt != null) {
                 Debug.Log($"⚠️ [FixedUpdateNetwork] {gameObject.name} è stato selezionato, esco dal nastro");
                 currentBelt = null;
-                _rigidbody.isKinematic = wasKinematicBefore;
-                _rigidbody.velocity = Vector3.zero;
+                IsKinematicOnBelt = false; 
+                
+                if (_rigidbody != null) {
+                    _rigidbody.velocity = Vector3.zero;
+                }
             }
+            if (IsKinematicOnBelt) IsKinematicOnBelt = false;
             return;
         }
 
+        // ⭐️ NUOVA LOGICA DI PAUSA ⭐️
+        if (ConveyorBeltSystemManager.Instance != null && ConveyorBeltSystemManager.Instance.IsPaused) {
+            return; // Non muovere l'oggetto se il sistema è in pausa
+        }
+        
+        // Il resto della logica di movimento
         if (currentBelt == null) {
+            if (IsKinematicOnBelt) IsKinematicOnBelt = false;
             return;
         }
 
-        // 🔹 Calcola la nuova posizione target
+        if (!IsKinematicOnBelt) IsKinematicOnBelt = true;
+
+        if (Runner == null) return;
+
         Vector3 velocity = currentBelt.GetConveyorVelocity();
         targetPosition += velocity * Runner.DeltaTime;
         
-        // 🔹 USA MovePosition per movimento fluido con interpolazione
-        _rigidbody.MovePosition(targetPosition);
+        if (_rigidbody != null) {
+            _rigidbody.MovePosition(targetPosition);
+        }
         
-        // 🔹 Aggiorna gli offset di MovableObject
         if (movableObject != null) {
             movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(targetPosition);
         }
         
-        if (Time.frameCount % 30 == 0) {
+        if (Time.frameCount % 60 == 0) {
             Debug.Log($"➡️ [FixedUpdateNetwork] {gameObject.name} target pos: {targetPosition}");
+        }
+    }
+
+    // ✅ FIX: Controlla i cambiamenti nello stato in Render
+    public override void Render() {
+        // Questo viene chiamato su tutti i client per sincronizzare visualmente
+        if (_previousKinematicState != IsKinematicOnBelt) {
+            _previousKinematicState = IsKinematicOnBelt;
+            ApplyKinematicState(IsKinematicOnBelt);
         }
     }
 
     public bool IsOnConveyor() {
         return currentBelt != null;
+    }
+
+    public override void Despawned(NetworkRunner runner, bool hasState) {
+        if (currentBelt != null) {
+            currentBelt = null;
+        }
+        IsKinematicOnBelt = false;
+    }
+
+    [ContextMenu("Debug State")]
+    private void DebugState() {
+        Debug.Log($"--- {gameObject.name} State ---");
+        Debug.Log($"Current Belt: {(currentBelt != null ? currentBelt.name : "None")}");
+        Debug.Log($"IsKinematicOnBelt: {IsKinematicOnBelt}");
+        Debug.Log($"Has Authority: {(Object != null ? Object.HasStateAuthority : false)}");
+        Debug.Log($"Target Position: {targetPosition}");
     }
 }
