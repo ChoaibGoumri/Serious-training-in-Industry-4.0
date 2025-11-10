@@ -1273,7 +1273,6 @@ MonoBehaviour:
   - {fileID: 1886134244}
   - {fileID: 1886134243}
   - {fileID: 1519631159}
-  - {fileID: 0}
   DesktopObjects:
   - {fileID: 722580588}
   - {fileID: 828899587}
@@ -2799,7 +2798,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Oggetti Mancanti :'
+  m_text: 'Oggetti difettati :'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3358,7 +3357,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1519631162}
-  - component: {fileID: 1519631161}
   - component: {fileID: 1519631163}
   - component: {fileID: 1519631160}
   m_Layer: 0
@@ -3386,37 +3384,6 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1519631163}
---- !u!114 &1519631161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1519631159}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b379f726d16416419522bf0fb65f6f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _runner: {fileID: 0}
-  _object: {fileID: 0}
-  InvokeRpc: 0
-  ObjectIndex: 0
-  WordOffset: 0
-  WordCount: 0
-  DefaultReplicated: 1
-  boxPrefab:
-    RawGuidValue:
-    - -7749237721716192326
-    - -7417271616450303093
-  moveSpeed: 0.6
-  prefabSpawner: {fileID: 505844700}
-  particleEffectPrefab: {fileID: 3548588485384254792, guid: 2f9e7dc163581394da1e00b561eed65d, type: 3}
-  respawnParticlePrefab: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
-  arPlaneManager: {fileID: 0}
-  subplaneConfig: {fileID: 0}
-  targetSubplane: {fileID: 0}
-  spawnedBoxes: []
 --- !u!4 &1519631162
 Transform:
   m_ObjectHideFlags: 0
@@ -3446,7 +3413,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arBoxPrefab:
     RawGuidValue: ba8b0c6d592d75948b6be462c38e1099
-  arMoveSpeed: 0.5
+  arMoveSpeed: 0.8
   arRaycastManager: {fileID: 1094143211}
   vrPrefabSpawner: {fileID: 505844700}
   despawnEffectPrefab: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
@@ -4665,6 +4632,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1509642351}
     m_Modifications:
+    - target: {fileID: -3544360145366886884, guid: 981443a0c00dffb44bab24dad2c5ae35, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1958561689561036276, guid: 981443a0c00dffb44bab24dad2c5ae35, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.0952203
@@ -4800,6 +4771,10 @@ PrefabInstance:
       propertyPath: m_Interpolate
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3840856014616333639, guid: 4b918a4b24b54744daafc138a082e98c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7789009995852931830, guid: 4b918a4b24b54744daafc138a082e98c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.0952203
@@ -4850,6 +4825,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7812292997695057737, guid: 4b918a4b24b54744daafc138a082e98c, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9175130412522942789, guid: 4b918a4b24b54744daafc138a082e98c, type: 3}
+      propertyPath: _worldState
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

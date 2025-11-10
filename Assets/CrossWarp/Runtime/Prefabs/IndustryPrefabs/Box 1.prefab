@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 9157548928635842444}
   - component: {fileID: 3337904371393765726}
   - component: {fileID: 5883510780215649909}
+  - component: {fileID: 5172401177188926560}
   m_Layer: 0
   m_Name: Box 1
   m_TagString: Untagged
@@ -155,6 +156,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 5883510780215649909}
+  - {fileID: 5172401177188926560}
 --- !u!65 &3337904371393765726
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -192,3 +194,15 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &5172401177188926560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7110981109239517367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d853cd40b1a2914a81b60a3a78888fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

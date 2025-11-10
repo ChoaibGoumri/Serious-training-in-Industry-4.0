@@ -64,7 +64,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
            
             if (movableObject != null && !movableObject.selected) {
                 IsKinematicOnBelt = true; 
-                Debug.Log($"✅ [OnCollisionEnter] {gameObject.name} è entrato sul nastro");
+                
             }
         }
     }
@@ -86,7 +86,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
                 movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(transform.rotation);
             }
 
-            Debug.Log($"✅ [OnCollisionExit] {gameObject.name} è uscito dal nastro");
+            
         }
     }
 
