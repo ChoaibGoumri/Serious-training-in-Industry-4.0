@@ -58,38 +58,68 @@ public class ConveyorItemMovement : NetworkBehaviour {
 
         ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
         if (belt != null) {
-            currentBelt = belt;
-            targetPosition = transform.position;
-            
-           
-            if (movableObject != null && !movableObject.selected) {
-                IsKinematicOnBelt = true; 
-                
-            }
+         
+            TrySetBelt(belt);
         }
+    }
+
+    private void OnCollisionStay(Collision collision) {
+    
+        if (currentBelt != null || Object == null || !Object.IsValid || !Object.HasStateAuthority) {
+            return;
+        }
+
+        if (movableObject != null && movableObject.selected) {
+            return;
+        }
+
+        
+        ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
+        if (belt != null) {
+            Debug.Log($"[OnCollisionStay] {gameObject.name} ha ri-acquisito il nastro.");
+            
+            TrySetBelt(belt);
+        }
+    }
+
+     
+    private void TrySetBelt(ConveyorBeltController belt) {
+        
+        if (currentBelt == belt) return; 
+
+        
+        if (movableObject != null && movableObject.selected) return;
+
+        currentBelt = belt;
+        
+     
+        targetPosition = transform.position; 
+        
+        IsKinematicOnBelt = true;
     }
 
     private void OnCollisionExit(Collision collision) {
-        
-        if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
+            
+            if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
 
-        ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
-        if (belt != null && belt == currentBelt) {
-            currentBelt = null;
-            
-            
-            IsKinematicOnBelt = false;
-            
-            if (movableObject != null && _rigidbody != null) {
-                _rigidbody.velocity = Vector3.zero;
-                movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(transform.position);
-                movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(transform.rotation);
+            ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
+            if (belt != null && belt == currentBelt) {
+                currentBelt = null;
+                
+                
+              
+                IsKinematicOnBelt = false;
+              
+                ApplyKinematicState(IsKinematicOnBelt); 
+                
+               
+                if (movableObject != null && _rigidbody != null) {
+                    _rigidbody.velocity = Vector3.zero; // <-- Questa era la linea 84
+                    movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(transform.position);
+                    movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(transform.rotation);
+                }
             }
-
-            
         }
-    }
-
     public override void FixedUpdateNetwork() {
          
         if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
@@ -142,11 +172,19 @@ public class ConveyorItemMovement : NetworkBehaviour {
 
    
     public override void Render() {
-       
-        if (_previousKinematicState != IsKinematicOnBelt) {
-            _previousKinematicState = IsKinematicOnBelt;
-            ApplyKinematicState(IsKinematicOnBelt);
-        }
+            
+           
+            if (movableObject != null && movableObject.selected) {
+                
+                _previousKinematicState = IsKinematicOnBelt; 
+                return;  
+            }
+
+            
+            if (_previousKinematicState != IsKinematicOnBelt) {
+                _previousKinematicState = IsKinematicOnBelt;
+                ApplyKinematicState(IsKinematicOnBelt);
+            }
     }
 
     public bool IsOnConveyor() {
