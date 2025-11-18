@@ -9,7 +9,6 @@ public class ConveyorItemMovement : NetworkBehaviour {
     private Vector3 targetPosition;
     private bool wasKinematicBefore;
 
-   
     [Networked]
     private NetworkBool IsKinematicOnBelt { get; set; }
 
@@ -120,36 +119,59 @@ public class ConveyorItemMovement : NetworkBehaviour {
                 }
             }
         }
+     
     public override void FixedUpdateNetwork() {
-         
+          
         if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
-
         
+        // 1. Gestione Selezione (Presa dell'oggetto)
         if (movableObject != null && movableObject.selected) {
             if (currentBelt != null) {
-                Debug.Log($"⚠️ [FixedUpdateNetwork] {gameObject.name} è stato selezionato, esco dal nastro");
                 currentBelt = null;
                 IsKinematicOnBelt = false; 
-                
-                if (_rigidbody != null) {
-                    _rigidbody.velocity = Vector3.zero;
-                }
+                if (_rigidbody != null) _rigidbody.velocity = Vector3.zero;
             }
             if (IsKinematicOnBelt) IsKinematicOnBelt = false;
             return;
         }
 
-        
-        if (ConveyorBeltSystemManager.Instance != null && ConveyorBeltSystemManager.Instance.IsPaused) {
-            return;  
-        }
+        if (ConveyorBeltSystemManager.Instance != null && ConveyorBeltSystemManager.Instance.IsPaused) return;  
         
         
+        // --- 🛑 BLOCCO DI CADUTA E RICERCA NASTRO 🛑 ---
         if (currentBelt == null) {
+            
+            // A. Abilitiamo la gravità per farlo cadere
             if (IsKinematicOnBelt) IsKinematicOnBelt = false;
+
+            // B. Fix Sfarfallamento (Sync MovableObject durante la caduta)
+            if (movableObject != null && _rigidbody != null) {
+                 movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(_rigidbody.position);
+                 movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(_rigidbody.rotation);
+            }
+
+            // C. 💡 NUOVO: RADAR PER IL NASTRO (RAYCAST) 💡
+            // Se siamo vicini a terra, controlliamo attivamente se c'è un nastro sotto di noi.
+            // Questo risolve il problema dell'oggetto "bloccato" che non rileva la collisione.
+            if (_rigidbody != null) 
+            {
+                // Lancia un raggio verso il basso (lunghezza 0.5f, adattalo se l'oggetto è molto alto)
+                if (Physics.Raycast(_rigidbody.position, Vector3.down, out RaycastHit hit, 0.5f)) 
+                {
+                    ConveyorBeltController beltFound = hit.collider.GetComponentInParent<ConveyorBeltController>();
+                    if (beltFound != null) {
+                        Debug.Log($"✅ [Raycast] Nastro trovato sotto l'oggetto! Forzo l'aggancio.");
+                        TrySetBelt(beltFound); // Aggancia immediatamente
+                        return; // Esci per questo frame, al prossimo sarà agganciato
+                    }
+                }
+            }
+            
             return;
         }
+        // --- FINE BLOCCO ---
 
+        // Logica di movimento normale sul nastro
         if (!IsKinematicOnBelt) IsKinematicOnBelt = true;
 
         if (Runner == null) return;
@@ -164,13 +186,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
         if (movableObject != null) {
             movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(targetPosition);
         }
-        
-        if (Time.frameCount % 60 == 0) {
-            Debug.Log($"➡️ [FixedUpdateNetwork] {gameObject.name} target pos: {targetPosition}");
-        }
     }
-
-   
     public override void Render() {
             
            
