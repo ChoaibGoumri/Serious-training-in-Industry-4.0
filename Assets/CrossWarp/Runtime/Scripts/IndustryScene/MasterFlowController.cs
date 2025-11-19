@@ -134,7 +134,7 @@ public class MasterFlowController : NetworkBehaviour
             ArBoxMover mover = boxNO.GetComponent<ArBoxMover>();
             if (mover != null)
             {
-                mover.Server_Init_FromVR(net_arFinalMoveDirection, arMoveSpeed, 2.0f, this);
+                mover.Server_Init_FromVR(net_arFinalMoveDirection, arMoveSpeed, 30.0f, this);
             }
         }
     }
