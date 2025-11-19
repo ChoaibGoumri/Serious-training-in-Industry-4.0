@@ -11,7 +11,8 @@ public class ConveyorBeltSystemManager : NetworkBehaviour {
    
     public static ConveyorBeltSystemManager Instance { get; private set; }
 
-  
+    [Networked] 
+    private int MissingItemOffset { get; set; }
     [Networked]
     public NetworkBool IsPaused { get; set; }
    
@@ -60,8 +61,11 @@ public class ConveyorBeltSystemManager : NetworkBehaviour {
            
             PauseStartTick = Runner.Tick;
             Debug.Log($"SISTEMA NASTRI: In Pausa. Tick di inizio: {PauseStartTick}");
-            
-           
+            int total = spawner.GetTotalSpawnedCount();
+            int current = 0;
+            foreach (var item in FindObjectsOfType<ConveyorItemMovement>()) 
+                if (item.IsOnConveyor()) current++;
+            MissingItemOffset = total - current;
             LastPauseDuration = 0f;
             MissingItemCount = 0;
 
@@ -114,6 +118,6 @@ public class ConveyorBeltSystemManager : NetworkBehaviour {
 
         Debug.Log($"📊 Calcolo Oggetti: Totale Spawanti={totalSpawned}, Attuali su Nastro={currentCountOnBelt} => Mancanti={conteggioMancanti}");
 
-        MissingItemCount = conteggioMancanti;
+        MissingItemCount = conteggioMancanti - MissingItemOffset;
     }
 }
