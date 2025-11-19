@@ -6,12 +6,14 @@ public class ConveyorItemMovement : NetworkBehaviour {
     private Rigidbody _rigidbody;
     private ConveyorBeltController currentBelt;
     private MovableObject movableObject;
+    
+    // targetPosition diventa il cursore virtuale che guida il movimento
     private Vector3 targetPosition;
+    
     private bool wasKinematicBefore;
 
     [Networked]
     private NetworkBool IsKinematicOnBelt { get; set; }
-
      
     private bool _previousKinematicState;
 
@@ -19,28 +21,38 @@ public class ConveyorItemMovement : NetworkBehaviour {
         _rigidbody = GetComponent<Rigidbody>();
         movableObject = GetComponent<MovableObject>();
         
-        
         if (_rigidbody == null) {
             Debug.LogError($"❌ [Spawned] {gameObject.name} non ha un Rigidbody!");
             return;
         }
 
-        targetPosition = transform.position;
+        targetPosition = _rigidbody.position; 
         wasKinematicBefore = _rigidbody.isKinematic;
         _previousKinematicState = IsKinematicOnBelt;
 
-        Debug.Log($"🚀 [Spawned] {gameObject.name} con Rigidbody attivato.");
-
-        
         ApplyKinematicState(IsKinematicOnBelt);
     }
 
-    
-    private void ApplyKinematicState(bool shouldBeKinematicOnBelt) {
-        if (_rigidbody == null) {
-            _rigidbody = GetComponent<Rigidbody>();
-            if (_rigidbody == null) return;
+    // 💡 1. SENSORE DI AUTORITÀ (Gira su tutti i client)
+    // Se siamo in VR, vediamo un nastro sotto, ma non comandiamo noi... richiediamo il comando!
+    private void FixedUpdate()
+    {
+        if (Object != null && Object.IsValid && !Object.HasStateAuthority && PlatformManager.IsDesktop())
+        {
+            // Raycast leggermente spostato (+0.1) per non colpire noi stessi
+            if (_rigidbody != null && Physics.Raycast(_rigidbody.position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, 2.0f))
+            {
+                if (hit.collider.GetComponentInParent<ConveyorBeltController>() != null)
+                {
+                    Object.RequestStateAuthority();
+                }
+            }
         }
+    }
+
+    private void ApplyKinematicState(bool shouldBeKinematicOnBelt) {
+        if (_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
+        if (_rigidbody == null) return;
 
         if (shouldBeKinematicOnBelt) {
             _rigidbody.isKinematic = true;
@@ -51,80 +63,55 @@ public class ConveyorItemMovement : NetworkBehaviour {
         }
     }
 
-    private void OnCollisionEnter(Collision collision) {
-        
+    // Gestione collisioni fisiche (es. caduta in AR)
+    private void OnCollisionEnter(Collision collision) => HandleCollision(collision);
+    private void OnCollisionStay(Collision collision) => HandleCollision(collision);
+
+    private void HandleCollision(Collision collision) {
         if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
+        if (currentBelt != null) return; // Priorità al target già agganciato
+        if (movableObject != null && movableObject.selected) return;
 
-        ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
+        ConveyorBeltController belt = collision.gameObject.GetComponentInParent<ConveyorBeltController>();
         if (belt != null) {
-         
             TrySetBelt(belt);
         }
     }
 
-    private void OnCollisionStay(Collision collision) {
-    
-        if (currentBelt != null || Object == null || !Object.IsValid || !Object.HasStateAuthority) {
-            return;
-        }
-
-        if (movableObject != null && movableObject.selected) {
-            return;
-        }
-
-        
-        ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
-        if (belt != null) {
-            Debug.Log($"[OnCollisionStay] {gameObject.name} ha ri-acquisito il nastro.");
-            
-            TrySetBelt(belt);
-        }
-    }
-
-     
     private void TrySetBelt(ConveyorBeltController belt) {
-        
         if (currentBelt == belt) return; 
-
-        
         if (movableObject != null && movableObject.selected) return;
 
         currentBelt = belt;
         
-     
-        targetPosition = transform.position; 
+        // Quando agganciamo, resettiamo il target sulla posizione attuale
+        targetPosition = _rigidbody.position; 
         
         IsKinematicOnBelt = true;
     }
 
     private void OnCollisionExit(Collision collision) {
-            
-            if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
+        if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
 
-            ConveyorBeltController belt = collision.gameObject.GetComponent<ConveyorBeltController>();
-            if (belt != null && belt == currentBelt) {
-                currentBelt = null;
-                
-                
-              
-                IsKinematicOnBelt = false;
-              
-                ApplyKinematicState(IsKinematicOnBelt); 
-                
-               
-                if (movableObject != null && _rigidbody != null) {
-                    _rigidbody.velocity = Vector3.zero; // <-- Questa era la linea 84
-                    movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(transform.position);
-                    movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(transform.rotation);
-                }
+        ConveyorBeltController belt = collision.gameObject.GetComponentInParent<ConveyorBeltController>();
+        if (belt != null && belt == currentBelt) {
+            currentBelt = null;
+            IsKinematicOnBelt = false;
+            ApplyKinematicState(IsKinematicOnBelt); 
+            
+            if (movableObject != null && _rigidbody != null) {
+                _rigidbody.velocity = Vector3.zero;
+                movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(transform.position);
+                movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(transform.rotation);
             }
         }
+    }
      
     public override void FixedUpdateNetwork() {
           
         if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
         
-        // 1. Gestione Selezione (Presa dell'oggetto)
+        // --- GESTIONE PRESA MANUALE ---
         if (movableObject != null && movableObject.selected) {
             if (currentBelt != null) {
                 currentBelt = null;
@@ -137,83 +124,92 @@ public class ConveyorItemMovement : NetworkBehaviour {
 
         if (ConveyorBeltSystemManager.Instance != null && ConveyorBeltSystemManager.Instance.IsPaused) return;  
         
-        
-        // --- 🛑 BLOCCO DI CADUTA E RICERCA NASTRO 🛑 ---
+        // --- 2. RICERCA DEL NASTRO (MAGNATE + SNAP) ---
         if (currentBelt == null) {
             
-            // A. Abilitiamo la gravità per farlo cadere
-            if (IsKinematicOnBelt) IsKinematicOnBelt = false;
+            // VR: Cinematico (niente gravità = niente sfarfallio)
+            // AR: Fisico (gravità attiva)
+            if (PlatformManager.IsDesktop()) {
+                 if (!IsKinematicOnBelt) IsKinematicOnBelt = true;
+            } else {
+                 if (IsKinematicOnBelt) IsKinematicOnBelt = false;
+            }
 
-            // B. Fix Sfarfallamento (Sync MovableObject durante la caduta)
-            if (movableObject != null && _rigidbody != null) {
+            // Sync posizione continua per AR (evita sfarfallio in caduta)
+            if (movableObject != null && _rigidbody != null && !PlatformManager.IsDesktop()) {
                  movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(_rigidbody.position);
                  movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(_rigidbody.rotation);
             }
 
-            // C. 💡 NUOVO: RADAR PER IL NASTRO (RAYCAST) 💡
-            // Se siamo vicini a terra, controlliamo attivamente se c'è un nastro sotto di noi.
-            // Questo risolve il problema dell'oggetto "bloccato" che non rileva la collisione.
+            // 💡 3. RAYCAST MAGNETE 💡
             if (_rigidbody != null) 
             {
-                // Lancia un raggio verso il basso (lunghezza 0.5f, adattalo se l'oggetto è molto alto)
-                if (Physics.Raycast(_rigidbody.position, Vector3.down, out RaycastHit hit, 0.5f)) 
+                // Raycast verso il basso (lunghezza 3m)
+                if (Physics.Raycast(_rigidbody.position + Vector3.up * 0.1f, Vector3.down, out RaycastHit hit, 3.0f)) 
                 {
                     ConveyorBeltController beltFound = hit.collider.GetComponentInParent<ConveyorBeltController>();
                     if (beltFound != null) {
-                        Debug.Log($"✅ [Raycast] Nastro trovato sotto l'oggetto! Forzo l'aggancio.");
-                        TrySetBelt(beltFound); // Aggancia immediatamente
-                        return; // Esci per questo frame, al prossimo sarà agganciato
+                        
+                        TrySetBelt(beltFound);
+                        
+                        // SNAP: Teletrasporto sulla superficie del nastro
+                        // +0.05f verticale per non compenetrare il pavimento
+                        Vector3 snapPosition = hit.point + (Vector3.up * 0.05f);
+                        
+                        // Aggiorniamo SUBITO il targetPosition allo snap
+                        targetPosition = snapPosition;
+
+                        // Aggiorniamo MovableObject e Rigidbody
+                        if (movableObject != null) {
+                            movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(snapPosition);
+                        }
+                        _rigidbody.MovePosition(snapPosition);
+                        return;
                     }
                 }
             }
-            
             return;
         }
-        // --- FINE BLOCCO ---
 
-        // Logica di movimento normale sul nastro
+        // --- 3. MOVIMENTO SUL NASTRO ---
+        
         if (!IsKinematicOnBelt) IsKinematicOnBelt = true;
 
         if (Runner == null) return;
 
         Vector3 velocity = currentBelt.GetConveyorVelocity();
+        
+        // 💡 4. LOGICA ACCUMULATIVA (Sblocca l'oggetto immobile)
+        // Non usiamo transform.position (che viene frenato da MovableObject).
+        // Accumuliamo la velocità su targetPosition, che avanza inesorabile.
         targetPosition += velocity * Runner.DeltaTime;
         
-        if (_rigidbody != null) {
-            _rigidbody.MovePosition(targetPosition);
-        }
-        
+        // A. Aggiorna Offset di MovableObject (MovableObject è costretto a inseguire targetPosition)
         if (movableObject != null) {
             movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(targetPosition);
         }
+        
+        // B. Muoviamo fisicamente il Rigidbody
+        if (_rigidbody != null) {
+            _rigidbody.MovePosition(targetPosition);
+        }
     }
+    
     public override void Render() {
-            
-           
             if (movableObject != null && movableObject.selected) {
-                
                 _previousKinematicState = IsKinematicOnBelt; 
                 return;  
             }
-
-            
             if (_previousKinematicState != IsKinematicOnBelt) {
                 _previousKinematicState = IsKinematicOnBelt;
                 ApplyKinematicState(IsKinematicOnBelt);
             }
     }
-
-    public bool IsOnConveyor() {
-        return currentBelt != null;
-    }
-
+    public bool IsOnConveyor() => currentBelt != null;
     public override void Despawned(NetworkRunner runner, bool hasState) {
-        if (currentBelt != null) {
-            currentBelt = null;
-        }
+        if (currentBelt != null) currentBelt = null;
         IsKinematicOnBelt = false;
     }
-
     [ContextMenu("Debug State")]
     private void DebugState() {
         Debug.Log($"--- {gameObject.name} State ---");
