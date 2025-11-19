@@ -31,12 +31,12 @@ public class ConveyorUI : NetworkBehaviour
 
             if (isPaused)
             {
-                pauseStatusText.text = "RIPRENDI";
+                pauseStatusText.text = " || RESUME";
                 pauseStatusText.color = Color.green;
             }
             else
             {
-                pauseStatusText.text = "PAUSA";
+                pauseStatusText.text = " >> PAUSE";
                 pauseStatusText.color = Color.red;
             }
         }
@@ -48,7 +48,7 @@ public class ConveyorUI : NetworkBehaviour
             pauseTimeText.gameObject.SetActive(lastDuration > 0);
             if(lastDuration > 0)
             {
-                pauseTimeText.text = $"Tempo impiegato: {lastDuration:F2}s"; 
+                pauseTimeText.text = $"Time taken: {lastDuration:F2}s"; 
             }
         }
 
@@ -59,7 +59,7 @@ public class ConveyorUI : NetworkBehaviour
             if(lastDuration > 0)
             {
                
-                missingItemsText.text = $"Oggetti difettati: {missingCount}";
+                missingItemsText.text = $"Defective items: {missingCount}";
             }
         }
     }
