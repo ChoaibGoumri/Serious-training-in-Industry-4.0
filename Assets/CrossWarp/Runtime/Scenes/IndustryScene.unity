@@ -1138,8 +1138,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: {x: 0, y: 0, z: 1}
-  maxSpeed: 3
-  startAcceleration: 1
+  maxSpeed: 2
+  startAcceleration: 0.5
   stopDeceleration: 100
   textureScrollSpeed: 0.5
   texturePropertyName: _BaseMap

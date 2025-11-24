@@ -33,33 +33,54 @@ public class ArVrOffsetCorrector : NetworkBehaviour
         PreviousTransitionState = transitionManager.transitionState;
     }
 
-    public override void FixedUpdateNetwork()
+
+public override void FixedUpdateNetwork()
+{
+    if (transitionManager == null || movableObject == null)
+        return;
+
+    // Se lo stato della transizione non è cambiato, non fare nulla
+    if (transitionManager.transitionState == PreviousTransitionState)
+        return;
+
+    // --- CLIENT VR (destinatario) ---
+    // Rileva la FINE della transizione AR->VR sul client VR / Desktop
+    if (HasStateAuthority &&
+        PlatformManager.IsDesktop() &&                              // siamo sul client VR / Desktop
+        transitionManager.transitionState == TransitionState.Ended && 
+        PreviousTransitionState != TransitionState.Ended)           // appena arrivati in Ended
     {
-        // Se lo stato non è cambiato, non fare nulla
-        if (transitionManager.transitionState == PreviousTransitionState) {
-            return;
-        }
+        Debug.LogWarning($"[ArVrOffsetCorrector] FINE AR->VR. Applico offset PREDEFINITO: {chosenVrOffset}");
 
-        // --- PARTE 2: IL CLIENT VR (Destinatario) ---
-        // Rileva la FINE della transizione AR->VR sul client VR
-        // (che ha appena ottenuto l'autorità)
-        if (HasStateAuthority &&
-            PlatformManager.IsDesktop() && // Assicura che siamo su VR
-            transitionManager.transitionState == TransitionState.Ended &&
-            PreviousTransitionState != TransitionState.Ended &&
-            movableObject.worldState == MovableObjectState.TransitioningToVR) 
+        // 1. Imposta la posizione/rotazione di arrivo (valori Networked)
+        movableObject.lastOffsetToSubplane = chosenVrOffset;
+        movableObject.lastRotationOffsetToSubplane = chosenVrRotation;
+
+        // 2. Il mondo torna ufficialmente in VR
+        movableObject.worldState = MovableObjectState.inVR;
+
+        // 3. Sicurezza: l'oggetto NON deve più risultare selezionato
+        if (movableObject.selected)
         {
-            Debug.LogWarning($"[ArVrOffsetCorrector] FINE AR->VR. Applico offset PREDEFINITO: {chosenVrOffset}");
-
-            // 1. SOVRASCRIVI i dati [Networked] con la tua posizione scelta
-            movableObject.lastOffsetToSubplane = chosenVrOffset;
-            movableObject.lastRotationOffsetToSubplane = chosenVrRotation;
-            
-            // 2. Finalizza lo stato
-            movableObject.worldState = MovableObjectState.inVR;
+            movableObject.ReleaseSelection();
         }
 
-        // Aggiorna lo stato precedente per il prossimo tick
-        PreviousTransitionState = transitionManager.transitionState;
+        // 4. Sicurezza: riaccendi subito mesh + collider lato VR
+        movableObject.SetShowing(true);
+
+        // 5. Reset pulito del componente che gestisce il nastro
+        var conveyor = GetComponent<ConveyorItemMovement>();
+        if (conveyor != null)
+        {
+            conveyor.ResetAfterReturnToVR();
+        }
     }
+
+    // Aggiorna lo stato precedente per il prossimo tick
+    PreviousTransitionState = transitionManager.transitionState;
+}
+
+
+
+
 }

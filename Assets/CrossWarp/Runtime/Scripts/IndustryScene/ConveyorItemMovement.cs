@@ -218,4 +218,34 @@ public class ConveyorItemMovement : NetworkBehaviour {
         Debug.Log($"Has Authority: {(Object != null ? Object.HasStateAuthority : false)}");
         Debug.Log($"Target Position: {targetPosition}");
     }
+
+    /// <summary>
+/// Chiamato quando l'oggetto è appena tornato da AR a VR,
+/// per resettare lo stato del nastro e riallineare il target.
+/// </summary>
+public void ResetAfterReturnToVR()
+{
+    if (_rigidbody == null)
+        _rigidbody = GetComponent<Rigidbody>();
+
+    // Nessun nastro agganciato
+    currentBelt = null;
+
+    // Fuori dal nastro: niente kinematic forzato
+    IsKinematicOnBelt = false;
+    ApplyKinematicState(false);
+
+    if (_rigidbody != null)
+    {
+        // Azzera subito velocità e rotazione per evitare comportamenti strani
+        _rigidbody.velocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
+
+        // Riallinea il cursore virtuale alla posizione attuale
+        targetPosition = _rigidbody.position;
+    }
+
+    Debug.Log($"[ConveyorItemMovement] ResetAfterReturnToVR su {gameObject.name}");
+}
+
 }
