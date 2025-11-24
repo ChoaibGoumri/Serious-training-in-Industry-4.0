@@ -1,7 +1,7 @@
 using UnityEngine;
 using Fusion;
 
-// RIMOSSO: [RequireComponent(typeof(Rigidbody))]
+ 
 [RequireComponent(typeof(NetworkTransform))] 
 public class ArBoxMover : NetworkBehaviour
 {
@@ -15,15 +15,15 @@ public class ArBoxMover : NetworkBehaviour
     [Networked] private NetworkBool net_isInitialized { get; set; }
     [Networked] private MasterFlowController flowController { get; set; }
     
-    // RIMOSSO: private Rigidbody rb;
+    
 
     public override void Spawned()
     {
-        // RIMOSSO: configurazione Rigidbody
+        
         CurrentState = BoxState.Idle; 
     }
 
-    // --- I TUOI METODI DI INIT (INVARIATI) ---
+    
     public void Server_Init_ToVR(Vector3 destination, float speed, MasterFlowController controller)
     {
         if (!HasStateAuthority) return;
@@ -49,9 +49,7 @@ public class ArBoxMover : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        // NOTA: Ho tolto "!HasStateAuthority" da qui.
-        // Il movimento deve girare su TUTTI per non laggare.
-        // Il despawn invece resta protetto (vedi sotto).
+ 
         if (!net_isInitialized) return;
 
         switch (CurrentState)
@@ -67,18 +65,17 @@ public class ArBoxMover : NetworkBehaviour
 
     private void HandleMovingToVR()
     {
-        // 1. MOVIMENTO (Eseguito da Server E Client per fluidità)
+       
         Vector3 direction = (net_destination - transform.position).normalized;
-        // IMPORTANTE: Usa Runner.DeltaTime, non Time.deltaTime
+        
         transform.position += direction * net_moveSpeed * Runner.DeltaTime;
 
-        // Opzionale: guarda la destinazione
+         
         if (direction != Vector3.zero) 
             transform.rotation = Quaternion.LookRotation(direction);
 
 
-        // 2. LOGICA DI CONTROLLO E DESPAWN (TUA LOGICA ORIGINALE)
-        // Eseguita SOLO se sei il Server
+       
         if (HasStateAuthority)
         {
             float distanceToTarget = Vector3.Distance(transform.position, net_destination);
@@ -101,15 +98,14 @@ public class ArBoxMover : NetworkBehaviour
 
     private void HandleMovingFromVR()
     {
-        // 1. MOVIMENTO (Eseguito da Server E Client per fluidità)
+        
         transform.position += net_moveDirection * net_moveSpeed * Runner.DeltaTime;
         
-        // Opzionale
+         
         if (net_moveDirection != Vector3.zero)
             transform.rotation = Quaternion.LookRotation(net_moveDirection);
 
-        // 2. LOGICA DI DESPAWN (TUA LOGICA ORIGINALE)
-        // Eseguita SOLO se sei il Server
+       
         if (HasStateAuthority)
         {
             if (net_despawnTimer.Expired(Runner))

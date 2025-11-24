@@ -7,7 +7,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
     private ConveyorBeltController currentBelt;
     private MovableObject movableObject;
     
-    // targetPosition diventa il cursore virtuale che guida il movimento
+ 
     private Vector3 targetPosition;
     
     private bool wasKinematicBefore;
@@ -33,8 +33,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
         ApplyKinematicState(IsKinematicOnBelt);
     }
 
-    // 💡 1. SENSORE DI AUTORITÀ (Gira su tutti i client)
-    // Se siamo in VR, vediamo un nastro sotto, ma non comandiamo noi... richiediamo il comando!
+ 
     private void FixedUpdate()
     {
         if (Object != null && Object.IsValid && !Object.HasStateAuthority && PlatformManager.IsDesktop())
@@ -63,7 +62,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
         }
     }
 
-    // Gestione collisioni fisiche (es. caduta in AR)
+     
     private void OnCollisionEnter(Collision collision) => HandleCollision(collision);
     private void OnCollisionStay(Collision collision) => HandleCollision(collision);
 
@@ -84,7 +83,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
 
         currentBelt = belt;
         
-        // Quando agganciamo, resettiamo il target sulla posizione attuale
+         
         targetPosition = _rigidbody.position; 
         
         IsKinematicOnBelt = true;
@@ -111,7 +110,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
           
         if (Object == null || !Object.IsValid || !Object.HasStateAuthority) return;
         
-        // --- GESTIONE PRESA MANUALE ---
+         
         if (movableObject != null && movableObject.selected) {
             if (currentBelt != null) {
                 currentBelt = null;
@@ -124,18 +123,17 @@ public class ConveyorItemMovement : NetworkBehaviour {
 
         if (ConveyorBeltSystemManager.Instance != null && ConveyorBeltSystemManager.Instance.IsPaused) return;  
         
-        // --- 2. RICERCA DEL NASTRO (MAGNATE + SNAP) ---
+        
         if (currentBelt == null) {
             
-            // VR: Cinematico (niente gravità = niente sfarfallio)
-            // AR: Fisico (gravità attiva)
+             
             if (PlatformManager.IsDesktop()) {
                  if (!IsKinematicOnBelt) IsKinematicOnBelt = true;
             } else {
                  if (IsKinematicOnBelt) IsKinematicOnBelt = false;
             }
 
-            // Sync posizione continua per AR (evita sfarfallio in caduta)
+             
             if (movableObject != null && _rigidbody != null && !PlatformManager.IsDesktop()) {
                  movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(_rigidbody.position);
                  movableObject.lastRotationOffsetToSubplane = movableObject.CalculateLastRotationOffsetToSubplane(_rigidbody.rotation);
@@ -152,14 +150,13 @@ public class ConveyorItemMovement : NetworkBehaviour {
                         
                         TrySetBelt(beltFound);
                         
-                        // SNAP: Teletrasporto sulla superficie del nastro
-                        // +0.05f verticale per non compenetrare il pavimento
+                        
                         Vector3 snapPosition = hit.point + (Vector3.up * 0.05f);
                         
-                        // Aggiorniamo SUBITO il targetPosition allo snap
+                         
                         targetPosition = snapPosition;
 
-                        // Aggiorniamo MovableObject e Rigidbody
+                        
                         if (movableObject != null) {
                             movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(snapPosition);
                         }
@@ -171,7 +168,7 @@ public class ConveyorItemMovement : NetworkBehaviour {
             return;
         }
 
-        // --- 3. MOVIMENTO SUL NASTRO ---
+     
         
         if (!IsKinematicOnBelt) IsKinematicOnBelt = true;
 
@@ -179,17 +176,14 @@ public class ConveyorItemMovement : NetworkBehaviour {
 
         Vector3 velocity = currentBelt.GetConveyorVelocity();
         
-        // 💡 4. LOGICA ACCUMULATIVA (Sblocca l'oggetto immobile)
-        // Non usiamo transform.position (che viene frenato da MovableObject).
-        // Accumuliamo la velocità su targetPosition, che avanza inesorabile.
         targetPosition += velocity * Runner.DeltaTime;
         
-        // A. Aggiorna Offset di MovableObject (MovableObject è costretto a inseguire targetPosition)
+        
         if (movableObject != null) {
             movableObject.lastOffsetToSubplane = movableObject.CalculateLastOffsetToSubplane(targetPosition);
         }
         
-        // B. Muoviamo fisicamente il Rigidbody
+        
         if (_rigidbody != null) {
             _rigidbody.MovePosition(targetPosition);
         }
@@ -219,29 +213,26 @@ public class ConveyorItemMovement : NetworkBehaviour {
         Debug.Log($"Target Position: {targetPosition}");
     }
 
-    /// <summary>
-/// Chiamato quando l'oggetto è appena tornato da AR a VR,
-/// per resettare lo stato del nastro e riallineare il target.
-/// </summary>
+ 
 public void ResetAfterReturnToVR()
 {
     if (_rigidbody == null)
         _rigidbody = GetComponent<Rigidbody>();
 
-    // Nessun nastro agganciato
+     
     currentBelt = null;
 
-    // Fuori dal nastro: niente kinematic forzato
+     
     IsKinematicOnBelt = false;
     ApplyKinematicState(false);
 
     if (_rigidbody != null)
     {
-        // Azzera subito velocità e rotazione per evitare comportamenti strani
+         
         _rigidbody.velocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
-        // Riallinea il cursore virtuale alla posizione attuale
+         
         targetPosition = _rigidbody.position;
     }
 

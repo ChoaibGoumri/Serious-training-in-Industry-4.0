@@ -11,11 +11,11 @@ public class ArVrOffsetCorrector : NetworkBehaviour
     
     [Header("Posizione di Arrivo in VR")]
     [Tooltip("Posizione LOCALE rispetto all'anchor VR (NCPCenter)")]
-    public Vector3 chosenVrOffset = new Vector3(0, 0, 0.5f); // Esempio: 50cm davanti
+    public Vector3 chosenVrOffset = new Vector3(0, 0, 0.5f);  
 
     [Tooltip("Rotazione LOCALE rispetto all'anchor VR")]
-    public Quaternion chosenVrRotation = Quaternion.identity; // Esempio: rotazione dritta
-    // 💡 ------------------------------------- 💡
+    public Quaternion chosenVrRotation = Quaternion.identity;  
+    
 
 
     [Networked]
@@ -39,36 +39,35 @@ public override void FixedUpdateNetwork()
     if (transitionManager == null || movableObject == null)
         return;
 
-    // Se lo stato della transizione non è cambiato, non fare nulla
+     
     if (transitionManager.transitionState == PreviousTransitionState)
         return;
 
-    // --- CLIENT VR (destinatario) ---
-    // Rileva la FINE della transizione AR->VR sul client VR / Desktop
+ 
     if (HasStateAuthority &&
-        PlatformManager.IsDesktop() &&                              // siamo sul client VR / Desktop
+        PlatformManager.IsDesktop() &&                               
         transitionManager.transitionState == TransitionState.Ended && 
-        PreviousTransitionState != TransitionState.Ended)           // appena arrivati in Ended
+        PreviousTransitionState != TransitionState.Ended)           
     {
         Debug.LogWarning($"[ArVrOffsetCorrector] FINE AR->VR. Applico offset PREDEFINITO: {chosenVrOffset}");
 
-        // 1. Imposta la posizione/rotazione di arrivo (valori Networked)
+         
         movableObject.lastOffsetToSubplane = chosenVrOffset;
         movableObject.lastRotationOffsetToSubplane = chosenVrRotation;
 
-        // 2. Il mondo torna ufficialmente in VR
+         
         movableObject.worldState = MovableObjectState.inVR;
 
-        // 3. Sicurezza: l'oggetto NON deve più risultare selezionato
+        
         if (movableObject.selected)
         {
             movableObject.ReleaseSelection();
         }
 
-        // 4. Sicurezza: riaccendi subito mesh + collider lato VR
+       
         movableObject.SetShowing(true);
 
-        // 5. Reset pulito del componente che gestisce il nastro
+        
         var conveyor = GetComponent<ConveyorItemMovement>();
         if (conveyor != null)
         {
@@ -76,7 +75,7 @@ public override void FixedUpdateNetwork()
         }
     }
 
-    // Aggiorna lo stato precedente per il prossimo tick
+     
     PreviousTransitionState = transitionManager.transitionState;
 }
 

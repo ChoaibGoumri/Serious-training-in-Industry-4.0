@@ -9,7 +9,7 @@ public class ConveyorUI : NetworkBehaviour
     [SerializeField] private TextMeshProUGUI pauseTimeText;
     [SerializeField] private TextMeshProUGUI missingItemsText;
     
-    // 1. NUOVO RIFERIMENTO
+     
     [SerializeField] private TextMeshProUGUI validItemsText; 
 
     public override void Render()
@@ -24,10 +24,10 @@ public class ConveyorUI : NetworkBehaviour
         float lastDuration = ConveyorBeltSystemManager.Instance.LastPauseDuration;
         int missingCount = ConveyorBeltSystemManager.Instance.MissingItemCount;
         
-        // 2. RECUPERO IL CONTEGGIO VALIDI
+         
         int validCount = ConveyorBeltSystemManager.Instance.ValidItemCount; 
 
-        // --- Gestione Status Pausa ---
+         
         if (pauseStatusText)
         {
             pauseStatusText.gameObject.SetActive(true); 
@@ -44,7 +44,7 @@ public class ConveyorUI : NetworkBehaviour
             }
         }
 
-        // --- Gestione Tempo ---
+     
         if (pauseTimeText)
         {
             pauseTimeText.gameObject.SetActive(lastDuration > 0);
@@ -54,7 +54,7 @@ public class ConveyorUI : NetworkBehaviour
             }
         }
 
-        // --- Gestione Oggetti Mancanti (Difettosi) ---
+         
         if (missingItemsText)
         {
             missingItemsText.gameObject.SetActive(lastDuration > 0);
@@ -64,10 +64,10 @@ public class ConveyorUI : NetworkBehaviour
             }
         }
 
-        // 3. NUOVA LOGICA PER OGGETTI VALIDI
+         
         if (validItemsText)
         {
-            // Lo mostriamo solo se c'è un report attivo (come gli altri testi)
+             
             validItemsText.gameObject.SetActive(lastDuration > 0);
             if (lastDuration > 0)
             {
@@ -76,7 +76,7 @@ public class ConveyorUI : NetworkBehaviour
         }
     }
 
-    // Aggiornato il metodo helper per includere il nuovo testo
+    
     private void ToggleUIElements(bool status, bool time, bool missing, bool valid)
     {
         if (pauseStatusText) pauseStatusText.gameObject.SetActive(status);

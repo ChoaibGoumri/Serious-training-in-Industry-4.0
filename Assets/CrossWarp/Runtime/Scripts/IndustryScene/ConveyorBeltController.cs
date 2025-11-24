@@ -10,10 +10,10 @@ public class ConveyorBeltController : MonoBehaviour {
 
     [Header("Physics Simulation")]
     [Tooltip("Velocità di partenza (Basso = Lento/Realistico)")]
-    public float startAcceleration = 2.0f; // Partenza morbida
+    public float startAcceleration = 2.0f;  
 
     [Tooltip("Velocità di frenata (Alto = Brusco/Immediato)")]
-    public float stopDeceleration = 100.0f; // Frenata istantanea
+    public float stopDeceleration = 100.0f;  
 
     [Header("Visual Settings")]
     public float textureScrollSpeed = 0.5f; 
@@ -57,27 +57,27 @@ public class ConveyorBeltController : MonoBehaviour {
     {
         float targetSpeed = maxSpeed;
         
-        // Se il sistema è in pausa, il target è 0
+         
         if (ConveyorBeltSystemManager.Instance != null && ConveyorBeltSystemManager.Instance.IsPaused)
         {
             targetSpeed = 0f;
         }
 
-        // LOGICA DI ACCELERAZIONE ASIMMETRICA
+         
         float speedChangeRate;
 
-        // Se dobbiamo accelerare (La velocità attuale è minore del target)
+        
         if (_currentSpeed < targetSpeed)
         {
-            speedChangeRate = startAcceleration; // Usa l'accelerazione lenta
+            speedChangeRate = startAcceleration;  
         }
-        // Se dobbiamo frenare (La velocità attuale è maggiore del target)
+        
         else
         {
-            speedChangeRate = stopDeceleration; // Usa la decelerazione brusca
+            speedChangeRate = stopDeceleration;  
         }
 
-        // Applica il cambiamento
+         
         _currentSpeed = Mathf.MoveTowards(_currentSpeed, targetSpeed, speedChangeRate * Time.deltaTime);
     }
 
@@ -89,7 +89,7 @@ public class ConveyorBeltController : MonoBehaviour {
         {
             float offsetStep = _currentSpeed * textureScrollSpeed * Time.deltaTime;
             
-            // Offset negativo per la direzione corretta
+             
             _currentTextureOffset.x -= offsetStep; 
             
             if(_currentTextureOffset.x < -1f) _currentTextureOffset.x += 1f;
