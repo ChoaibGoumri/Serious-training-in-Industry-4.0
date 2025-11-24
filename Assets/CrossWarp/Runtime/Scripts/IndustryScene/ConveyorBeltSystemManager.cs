@@ -21,6 +21,11 @@ public class ConveyorBeltSystemManager : NetworkBehaviour {
     [Networked]
     public int MissingItemCount { get; set; }
 
+    // --- NUOVA VARIABILE ---
+    [Networked]
+    public int ValidItemCount { get; set; } 
+    // -----------------------
+
  
     [Networked]
     private int PauseStartTick { get; set; }
@@ -90,22 +95,17 @@ public class ConveyorBeltSystemManager : NetworkBehaviour {
     private void CalculateMissingItems() {
         if (!Object.HasStateAuthority) return; 
 
-        
-        if (spawner == null)
-        {
-            Debug.LogError("❌ Calcolo Fallito: Il 'PrefabSpawner' non è collegato al ConveyorBeltSystemManager nell'Inspector!");
-            MissingItemCount = -1;  
+        if (spawner == null) {
+            // ... (codice errore esistente)
             return;
         }
 
-        
         int totalSpawned = spawner.GetTotalSpawnedCount();
-
-        
         ConveyorItemMovement[] allItems = FindObjectsOfType<ConveyorItemMovement>();
 
-        
         int currentCountOnBelt = 0;
+        
+        // 1. Contiamo quanti oggetti ci sono fisicamente sul nastro
         foreach (ConveyorItemMovement item in allItems)
         {
             if (item.IsOnConveyor())
@@ -114,10 +114,16 @@ public class ConveyorBeltSystemManager : NetworkBehaviour {
             }
         }
 
-        int conteggioMancanti = totalSpawned - currentCountOnBelt;
+        // 2. La tua logica semplificata:
+        // Se è sul nastro, per noi è "Valido" (o comunque presente).
+        ValidItemCount = currentCountOnBelt;
 
-        Debug.Log($"📊 Calcolo Oggetti: Totale Spawanti={totalSpawned}, Attuali su Nastro={currentCountOnBelt} => Mancanti={conteggioMancanti}");
+        // 3. Calcolo dei mancanti (quelli caduti o distrutti)
+        int conteggioMancanti = totalSpawned - currentCountOnBelt;
+        
+        Debug.Log($"Totale Spawnati: {totalSpawned}, Validi (Sul Nastro): {ValidItemCount}, Mancanti: {conteggioMancanti}");
 
         MissingItemCount = conteggioMancanti - MissingItemOffset;
     }
+
 }

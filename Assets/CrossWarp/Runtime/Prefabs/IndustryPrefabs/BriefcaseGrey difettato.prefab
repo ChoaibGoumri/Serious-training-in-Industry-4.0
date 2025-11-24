@@ -20,8 +20,9 @@ GameObject:
   - component: {fileID: -445399217886432125}
   - component: {fileID: 8357365295429690798}
   - component: {fileID: 4833717793417123221}
+  - component: {fileID: 8276309818546833015}
   m_Layer: 0
-  m_Name: BriefcaseGrey
+  m_Name: BriefcaseGrey difettato
   m_TagString: MovableObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,7 +71,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -2505642851634945670, guid: f396e3429a4864fc2ad497cb3ce5fe2c, type: 3}
+  - {fileID: 2100000, guid: 0d15c30e88e5c8543b670bf60ca3ccd8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 3070273415
+  SortKey: 3876802918
   ObjectInterest: 1
   Flags: 786433
   NestedObjects: []
@@ -258,3 +259,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chosenVrOffset: {x: -1.8, y: -1, z: 0}
   chosenVrRotation: {x: 0, y: 0, z: 0, w: 1}
+--- !u!114 &8276309818546833015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3712038716243969395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9eb58e4c06ea554987c9aa1d54f988e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  applyOnStart: 1
+  enableDeformation: 1
+  deformationStrength: 0.1
+  enableMaterialDamage: 1
+  damagedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  damageTexture: {fileID: 2800000, guid: 0eb25e2f7392f734e86236eab131602d, type: 3}
