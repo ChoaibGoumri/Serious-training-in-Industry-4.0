@@ -71,7 +71,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0d15c30e88e5c8543b670bf60ca3ccd8, type: 2}
+  - {fileID: 2100000, guid: c84bd512e70e2be47b48c5ef468e9cd9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -271,9 +271,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9eb58e4c06ea554987c9aa1d54f988e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numberOfScratches: 5
+  scratchWidth: 0.1
+  scratchDepth: 0.05
   applyOnStart: 1
-  enableDeformation: 1
-  deformationStrength: 0.1
-  enableMaterialDamage: 1
-  damagedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  damageTexture: {fileID: 2800000, guid: 0eb25e2f7392f734e86236eab131602d, type: 3}
+  scratchColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
