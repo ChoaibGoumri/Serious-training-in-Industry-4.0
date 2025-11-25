@@ -1191,8 +1191,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: -0.000000029802322, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 1.8130677}
+  m_Center: {x: -0.000000047683717, y: -0, z: 0.40653384}
 --- !u!23 &183501693
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3585,7 +3585,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arBoxPrefab:
     RawGuidValue: ba8b0c6d592d75948b6be462c38e1099
-  arMoveSpeed: 0.7
+  arMoveSpeed: 0.3
   arRaycastManager: {fileID: 1094143211}
   vrPrefabSpawner: {fileID: 505844700}
   despawnEffectPrefab: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
