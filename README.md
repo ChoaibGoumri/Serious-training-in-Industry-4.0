@@ -18,20 +18,16 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-<h1 align="center">CrossWarp</h1>
+<h1 align="center">Serious training in Industry 4.0</h1>
 
   <p align="center">
-    A cross-reality framework for seamless collaboration between different AR/VR users.
+    Serious training in Industry 4.0 via a cross-reality portal developed with the CrossWarp framework
     <br />
-    <br />
-    <a href="https://github.com/Be-Cenzo/CrossWarp">View Demo</a>
+    <a href="https://github.com/isislab-unisa/CrossWarp/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     &middot;
-    <a href="https://github.com/Be-Cenzo/CrossWarp/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    &middot;
-    <a href="https://github.com/Be-Cenzo/CrossWarp/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/isislab-unisa/CrossWarp/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
-
 
 
 <!-- TABLE OF CONTENTS -->
@@ -68,8 +64,8 @@
 ![CrossWarp][product-screenshot]
 
 
+This repository presents a serious training for qualitative inspection on industrial production lines, where multiple boxes move in augmented reality, simulating the motion of a conveyor belt. Once they reach the monitor, the boxes pass through a portal that reveals their internal content. Operators can stop the conveyor, pick up the object contained in the box, and bring it into augmented reality for inspection: compliant components re-enter the flow, while defective ones remain in augmented reality as flagged items. An on-screen interface shows the time taken by the operator to perform the inspection, the number of defective objects detected out of the total, the number of valid objects on the conveyor, and a score computed from these values. Developed with Unity, Photon Fusion, and the CrossWarp framework, the system supports real-time multi-user training, performance feedback, and competency assessment in hybrid Industry 4.0 scenarios.
 
-CrossWarp is a framework that unifies mobile AR devices (Android and iOS) and desktops into a single collaborative ecosystem. It not only ensures seamless transitions between the physical and virtual worlds but also provides a device-independent architecture designed to maximize interoperability. The system enables co-present users, such as two people using AR-enabled smartphones, to manipulate shared objects in real time while preserving their state and context, regardless of the platform used.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -103,7 +99,7 @@ Unity 2022.3 or later must be installed, to install it you can use Unity Hub.
 2. Install CrossWarp via the Unity Package Manager by following these steps:
     - Open the Package Manager.
     - Click on "Add package from git URL".
-    - Enter the following URL: https://github.com/Be-Cenzo/CrossWarp.git?path=/Assets/CrossWarp
+    - Enter the following URL: https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0
 
 ### ⚙️ Configuration
 After importing, some parameters need to be configured in Project Settings:
@@ -119,17 +115,25 @@ After importing, some parameters need to be configured in Project Settings:
 <!-- USAGE EXAMPLES -->
 ## 🎮 Usage
 
-Once the installation is complete, you can use the components provided by CrossWarp to develop Cross-Reality experiences. The package includes example scenes demonstrating the core components, including the integration of interactive objects with physics mechanics. These examples can be imported and used as a foundation for building new collaborative and immersive applications.
+Once the installation is complete, you can use the components provided by CrossWarp to develop the serious training experience for qualitative inspection. The project includes example scenes that showcase the core Cross-Reality mechanics used in this training scenario; in particular, you can open the **IndustryScene** to explore and customize the full inspection workflow.
 
-By examining the HouseScene included in the package, you can see how to configure the environment for Cross-Reality experiences. The key components are:
-- AR Scene Objects: XR Interaction Manager, AR Session, XR Origin
-- Photon Configuration Objects: Prototype Network Start, Prototype Runner
 
-![Product Name Screen Shot][housescene]
-
-The House object contains all the static elements of the house structure that do not interact with CrossWarp. In contrast, objects like SofaDouble, SofaArmChair, TableRectangleShort, and LampTall are designed to be transported between different realities.
+![Product Name Screen Shot][conveyor]
 
 ### How To Configure Objects
+
+To add new objects to the scene, simply assign them in Scene → ObjectSpawner
+- Prefabs To Spawn
+
+To enable objects to move on the conveyor, add:
+- Conveyor Item Movement
+- Ar Vr Offset Corrector
+
+To configure how the system distinguishes valid and defective items, assign the following prefab lists in **Scene → Conveyor Manager**:
+
+- Valid Item Prefabs
+- Defective Item Prefabs
+
 To enable an object to be transported between different realities, you need to configure specific components within it:
 - AR Anchor
 - Outline
@@ -141,19 +145,18 @@ To enable an object to be transported between different realities, you need to c
 
 With these components configured, any type of object can seamlessly transition between the two worlds.
 
+The AR box comes preconfigured; to adjust its behavior, open **AR Box Controller**.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- ROADMAP -->
 ## 🛤 Roadmap
 
 - [ ] Support for Head-Mounted Displays VR/AR
-- [ ] ContainerObjects
-- [ ] Physical objects prefabs
+- [ ] Vision AI
 
-See the [open issues](https://github.com/Be-Cenzo/CrossWarp/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -175,13 +178,6 @@ Don't forget to give the project a star! Thanks again!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Top contributors:
-
-<a href="https://github.com/Be-Cenzo/CrossWarp/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Be-Cenzo/CrossWarp" alt="contrib.rocks image" />
-</a>
-
-
 
 <!-- LICENSE -->
 ## 📜 License
@@ -190,14 +186,12 @@ Distributed under the Apache License 2.0. See `LICENSE.txt` for more information
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- CONTACT -->
 ## 📧 Contact
 
-Vincenzo Offertucci - [Linkedin][linkedin-url]
+Choaib Goumri - [Linkedin][linkedin-url]
 
-Project Link: [https://github.com/Be-Cenzo/CrossWarp](https://github.com/Be-Cenzo/CrossWarp)
+Project Link: [https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0/](https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -206,10 +200,10 @@ Project Link: [https://github.com/Be-Cenzo/CrossWarp](https://github.com/Be-Cenz
 <!-- ACKNOWLEDGMENTS -->
 ## 🎖️ Acknowledgments
 
-* QuickOutline package from Chris Nolet (https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488)
-* In-game Debug Console package from yasirkula (https://assetstore.unity.com/packages/tools/gui/in-game-debug-console-68068) useful if you want an in-game debugger on mobile 
-* Interior House Assets package (https://assetstore.unity.com/packages/3d/environments/interior-house-assets-urp-257122)
-* Digital artworks made by Federica Corso
+* Aegis - Simple Stylized Cardboard Boxes (https://assetstore.unity.com/publishers/111226)
+* Indian Ocean Assets - Simple Particles FX : Toon Effects (https://assetstore.unity.com/packages/vfx/particles/simple-particles-fx-toon-effects-244171)
+* Sickhead Games - Sci-Fi Construction Kit (Modular) (https://assetstore.unity.com/packages/3d/environments/sci-fi/sci-fi-construction-kit-modular-159280)
+* Dumokan Art - Quarry Conveyor system Kit (https://sketchfab.com/3d-models/quarry-conveyor-system-kit-badf50e9d6ea47ac814e1cae037799ed)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -217,22 +211,27 @@ Project Link: [https://github.com/Be-Cenzo/CrossWarp](https://github.com/Be-Cenz
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[contributors-url]: https://github.com/Be-Cenzo/CrossWarp/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[forks-url]: https://github.com/Be-Cenzo/CrossWarp/network/members
-[stars-shield]: https://img.shields.io/github/stars/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[stars-url]: https://github.com/Be-Cenzo/CrossWarp/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[issues-url]: https://github.com/Be-Cenzo/CrossWarp/issues
-[license-shield]: https://img.shields.io/github/license/Be-Cenzo/CrossWarp.svg?style=for-the-badge
-[license-url]: https://github.com/Be-Cenzo/CrossWarp/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/vincenzo-offertucci
-[product-screenshot]: ReadmeFigures/CrossWarp.png
-[product-video]: ReadmeFigures/transitionsdemo.mp4
-[housescene]: ReadmeFigures/HouseScene.png
 
+[contributors-shield]: https://img.shields.io/github/contributors/ChoaibGoumri/Serious-training-in-Industry-4.0.svg?style=for-the-badge
+[contributors-url]: https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0/graphs/contributors
+
+[forks-shield]: https://img.shields.io/github/forks/ChoaibGoumri/Serious-training-in-Industry-4.0.svg?style=for-the-badge
+[forks-url]: https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0/network/members
+
+[stars-shield]: https://img.shields.io/github/stars/ChoaibGoumri/Serious-training-in-Industry-4.0.svg?style=for-the-badge
+[stars-url]: https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0/stargazers
+
+[issues-shield]: https://img.shields.io/github/issues/ChoaibGoumri/Serious-training-in-Industry-4.0.svg?style=for-the-badge
+[issues-url]: https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0/issues
+
+[license-shield]: https://img.shields.io/github/license/ChoaibGoumri/Serious-training-in-Industry-4.0.svg?style=for-the-badge
+[license-url]: https://github.com/ChoaibGoumri/Serious-training-in-Industry-4.0/blob/master/LICENSE.txt
+
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/choaib-goumri
+
+[product-screenshot]: ReadmeFigures/SeriousflowV2.png
+[conveyor]: ReadmeFigures/Conveyor.png
 
 
 [Unity]: https://img.shields.io/badge/unity-000000?style=for-the-badge&logo=unity&logoColor=white
